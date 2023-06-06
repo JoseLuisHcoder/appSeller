@@ -3,6 +3,13 @@ import 'package:vendedor/data/themes.dart';
 
 import 'package:vendedor/presentation/screens/base.dart';
 
+import 'domain/blocs/auth/auth_bloc.dart';
+import 'domain/blocs/cart/cart_bloc.dart';
+import 'domain/blocs/product/product_bloc.dart';
+import 'domain/blocs/promotion/promotion_bloc.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -10,11 +17,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Material App',
-      theme: solarTheme,
-      home: const Base(),
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => AuthBloc()..add(CheckLoginEvent())),
+          BlocProvider(create: (context) => ProductBloc()),
+          BlocProvider(create: (context) => PromotionBloc()),
+          BlocProvider(create: (context) => CartBloc()),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Material App',
+          theme: solarTheme,
+          home: const Base(),
+        ));
   }
 }

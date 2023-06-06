@@ -1,10 +1,11 @@
-import 'package:ecommerce/domain/blocs/blocs.dart';
-import 'package:ecommerce/presentation/screens/base.dart';
-import 'package:ecommerce/presentation/screens/login/login.dart';
+import 'package:vendedor/domain/blocs/blocs.dart';
+import 'package:vendedor/presentation/screens/base.dart';
+import 'package:vendedor/presentation/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/themes.dart';
+import '../../../domain/blocs/product/product_event.dart';
 
 class LoadingPage extends StatefulWidget {
   @override

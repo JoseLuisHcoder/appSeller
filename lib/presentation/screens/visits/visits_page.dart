@@ -1,314 +1,875 @@
 import 'package:flutter/material.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/visits_customer_nfo.dart';
 
 import '../../../data/themes.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import '../../../widgets/search_static.dart';
 
-class VisitsPage extends StatelessWidget {
-  VisitsPage({Key? key}) : super(key: key);
-  List<String> images = [
-    'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png',
-    'https://steemitimages.com/p/2gsjgna1uruvUuS7ndh9YqVwYGPLVszbFLwwpAYXZAxHr5bUXdS9Xbr4P7hwgSZ6JcTgdMNVgsozCDa7HdBAJJMFQJAzdvhnw28ChdsXAYEnnuk3dY?format=match&mode=fit&width=640',
-    'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png'
-  ];
+class VisitsPage extends StatefulWidget {
+  const VisitsPage({super.key});
+
+  @override
+  State<VisitsPage> createState() => _VisitsPageState();
+}
+
+const String textSearch = "Ingresa los datos";
+
+class _VisitsPageState extends State<VisitsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Plan de visitas',
-          style: TextStyle(color: kAppBar, fontSize: 16),
-        ),
-        backgroundColor: kWhite,
-        elevation: 0,
-      ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-        width: double.infinity,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: const Row(
+            children: [
+              Flexible(child: SearchStatic(textSearch: textSearch)),
+            ],
+          )),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            _nameCompany(),
+            const SizedBox(
+              height: 10,
+            ),
+            _saldo(),
+            _linearProgress(),
+            const SizedBox(
+              height: 5,
+            ),
+            _lineCredit(),
+            const SizedBox(
+              height: 10,
+            ),
             const Divider(),
-            _infoUser(),
-            SizedBox(height: 10),
-            _slider(),
-            const SizedBox(height: 7),
-            _agenda(),
-            SizedBox(height: 20),
-            _buttonInit(context),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: DefaultTabController(
+                length: 2,
+                child: Column(
+                  children: [
+                    TabBar(
+                        labelColor: const Color(0xff00BBF9),
+                        unselectedLabelColor: Colors.grey.shade800,
+                        indicatorColor: const Color(0xff00BBF9),
+                        tabs: const [
+                          Tab(text: 'Clientes en ruta'),
+                          Tab(
+                            text: 'Clientes fuera de ruta',
+                          )
+                        ]),
+                    Expanded(
+                        child: TabBarView(children: [
+                      _listOrders(context),
+                      _listOrders2(context)
+                    ]))
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  SizedBox _buttonInit(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: kGreen,
-        ),
-        child: const Text('INICIAR VISITA',
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w400, color: kWhite)),
-      ),
-    );
-  }
-
-  Container _agenda() {
+  Container _lineCredit() {
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: 7),
-          Text(
-            'Agenda',
-            style: TextStyle(fontSize: 16, color: kGrey800),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '06',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Días del carro con productos',
-                        style: TextStyle(fontSize: 12))
-                  ],
-                ),
-              ),
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '1200',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Galone por vender', style: TextStyle(fontSize: 12))
-                  ],
-                ),
-              ),
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'S/5800',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
-                  ],
-                ),
-              )
-            ],
-          )
+          RichText(
+              text: const TextSpan(children: [
+            TextSpan(
+                text: 'Clientes a visitar: ',
+                style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w300,
+                    color: kAppBar)),
+            TextSpan(
+                text: '17',
+                style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    color: kAppBar)),
+          ])),
         ],
       ),
     );
   }
 
-  Widget _slider() {
-    return Column(
-      children: [
-        CarouselSlider(
-          options: CarouselOptions(
-            height: 150.0, // Ajusta la altura del slider según tus necesidades
-            autoPlay: false, // Habilita la reproducción automática
-          ),
-          items: images.map((imageUrl) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 7),
-        const Text('Desarrollo del cliente')
-      ],
-    );
+  Container _linearProgress() {
+    return Container(
+        height: 6,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: LinearProgressIndicator(
+          color: const Color(0xff00BBF9),
+          value: 0.7,
+          backgroundColor: Colors.grey.shade200,
+        ));
   }
 
-  Container _infoUser() {
+  Container _saldo() {
     return Container(
-      padding: EdgeInsets.only(top: 10),
-      width: double.infinity,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          'VERONICA ARENAS MAMANI',
-          style: TextStyle(fontSize: 20, color: kAppBar),
-        ),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Wrap(
-            spacing: 7,
-            runSpacing: 7,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
-                    color: kGrey200,
-                    border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  '45 Años',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
-                    color: kGrey200,
-                    border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  'Exigente',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                    color: kGrey200,
-                    border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  'Ocupada',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-            ],
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 10,
           ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
-          child: Row(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: kGrey200,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: kGrey400,
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.person_2_outlined,
-                      size: 50,
-                      color: kGrey400,
-                    ),
-                  ),
+                  Text('Visitados',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w300,
+                          color: Color(0xff525252))),
+                  Text('('),
+                  Icon(Icons.timer_outlined, size: 12, color: kAppBar),
+                  Text('2h 3m',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w300,
+                          color: kAppBar)),
+                  Text(')')
                 ],
               ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  child: const Text(
-                    'Veronica es unapersona que se destaca por su empatia, trato amable y valentia al enfrentar los desafios del cambio tecnologico en sus labores diarias, a pesar de no tener un titulo profesional, es de confiar, y muy cumplida en sus pagos ',
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5,
-                    style: TextStyle(fontSize: 14, color: kGrey600),
-                  ),
-                ),
-              )
+              Text('Por visitar',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w300,
+                      color: Color(0xff525252))),
             ],
           ),
-        )
-      ]),
+          SizedBox(
+            height: 7,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: [
+                Text('5',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        color: kAppBar)),
+                Text('('),
+                Text('Tiempo de visita:',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        color: kAppBar)),
+                Text('2h 3m',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        color: kAppBar)),
+                Text(')')
+              ]),
+              Text('12',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      color: kAppBar)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Row _nameCompany() {
-    return Row(children: [
-      Expanded(
-        child: Container(
-          padding: EdgeInsets.only(right: 15),
-          decoration: const BoxDecoration(
-            border: Border(
-              right: BorderSide(width: 1.0, color: kGrey200),
-            ),
-          ),
-          child: const Column(children: [
-            Text(
-              'REPRESENTACIONES CABAÑA DIESEL',
-              style: TextStyle(fontSize: 20, color: kAppBar),
-            ),
-            Row(
+  Container _listOrders(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+        child: Column(
+          children: [
+            Column(
               children: [
-                Text(
-                  'Ultima visita:',
-                  style: TextStyle(fontSize: 14, color: kGrey600),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CERRO COLORADO',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20, color: kTextColor),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 5),
-                Text('HOY', style: TextStyle(color: kGrey800)),
-                SizedBox(width: 5),
-                Text('10:20 AM', style: TextStyle(color: kGrey800))
+                const Divider(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (contex) => VisitsCustomerInfo()));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey.shade600,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                              child: const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+                                  Text(
+                                    'LUBRIMOTORS SQL',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Text(
+                                    'Calle Las Américas 563',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Ultima visita: HOY 10:20 AM',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGrey500),
+                                      ),
+                                      SizedBox(
+                                        width: 50,
+                                      ),
+                                      Text(
+                                        'VISITADO',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGreen),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (contex) => VisitsCustomerInfo()));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey.shade600,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                              child: const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+                                  Text(
+                                    'REPRESENTACIONES CABAÑA DIESEL',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Text(
+                                    'Calle Las Américas 863',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Ultima visita: 12-MAY-2023',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGrey500),
+                                      ),
+                                      SizedBox(
+                                        width: 50,
+                                      ),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGreen),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
               ],
-            )
-          ]),
-        ),
-      ),
-      Container(
-        padding: EdgeInsets.only(left: 15),
-        child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Scoring',
-                style: TextStyle(fontSize: 16, color: kGrey600),
-              ),
-              Text('A14323', style: TextStyle(fontSize: 20, color: kGreen)),
-            ]),
-      ),
-    ]);
+            ),
+            Divider(),
+            Column(
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CAYMA',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20, color: kTextColor),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (contex) => VisitsCustomerInfo()));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey.shade600,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                              child: const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+                                  Text(
+                                    'LUBRIMOTORS SQL',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Text(
+                                    'Calle Las Américas 563',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Ultima visita: HOY 10:20 AM',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGrey500),
+                                      ),
+                                      SizedBox(
+                                        width: 50,
+                                      ),
+                                      Text(
+                                        'VISITADO',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGreen),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (contex) => VisitsCustomerInfo()));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.account_circle_outlined,
+                          color: Colors.grey.shade600,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                              child: const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+                                  Text(
+                                    'REPRESENTACIONES CABAÑA DIESEL',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Text(
+                                    'Calle Las Américas 863',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: kAppBar),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Ultima visita: 12-MAY-2023',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGrey500),
+                                      ),
+                                      SizedBox(
+                                        width: 50,
+                                      ),
+                                      Text(
+                                        '',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: kGreen),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.description_outlined,
+                      color: Colors.white,
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'P001-0005620',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
+                                ),
+                                Text(
+                                  'Vencio el 02/05/2023',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
+  Container _listOrders2(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+        child: Column(
+          children: [
+            Column(
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CERRO COLORADO',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20, color: kTextColor),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Container(
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.grey.shade600,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(),
+                                Text(
+                                  'LUBRIMOTORS SQL',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Text(
+                                  'Calle Las Américas 563',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Ultima visita: HOY 10:20 AM',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGrey500),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    Text(
+                                      'VISITADO',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGreen),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.grey.shade600,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(),
+                                Text(
+                                  'REPRESENTACIONES CABAÑA DIESEL',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Text(
+                                  'Calle Las Américas 863',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Ultima visita: 12-MAY-2023',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGrey500),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGreen),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+              ],
+            ),
+            Divider(),
+            Column(
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CAYMA',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20, color: kTextColor),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                Container(
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.grey.shade600,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(),
+                                Text(
+                                  'LUBRIMOTORS SQL',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Text(
+                                  'Calle Las Américas 563',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Ultima visita: HOY 10:20 AM',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGrey500),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    Text(
+                                      'VISITADO',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGreen),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Container(
+                  width: double.infinity,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.grey.shade600,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                            child: const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Divider(),
+                                Text(
+                                  'REPRESENTACIONES CABAÑA DIESEL',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Text(
+                                  'Calle Las Américas 863',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: kAppBar),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Ultima visita: 12-MAY-2023',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGrey500),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                    ),
+                                    Text(
+                                      '',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: kGreen),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.description_outlined,
+                      color: Colors.white,
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'P001-0005620',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
+                                ),
+                                Text(
+                                  'Vencio el 02/05/2023',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 }
