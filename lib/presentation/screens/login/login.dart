@@ -4,6 +4,7 @@ import 'package:vendedor/domain/blocs/auth/auth_bloc.dart';
 import 'package:vendedor/presentation/screens/base.dart';
 
 import '../../../data/themes.dart';
+import '../../../domain/blocs/product/product_event.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

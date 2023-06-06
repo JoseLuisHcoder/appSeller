@@ -1,9 +1,9 @@
-// import 'package:ecommerce/domain/models/cart_product.dart';
-// import 'package:ecommerce/domain/models/product.dart';
+import 'package:vendedor/domain/models/cart_product.dart';
+import 'package:vendedor/domain/models/product.dart';
 
-// List<Product> productsList = [];
-// List<CartProduct> productsCart = [];
-// List<String> recentSearches = [];
+List<Product> productsList = [];
+List<CartProduct> productsCart = [];
+List<String> recentSearches = [];
 
 List<String> searchTextRotation = [
   "Baterias para autos",

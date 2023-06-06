@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vendedor/data/themes.dart';
 import 'package:vendedor/presentation/screens/development/development_page.dart';
-import 'package:vendedor/presentation/screens/home/home_page.dart';
+
 import 'package:vendedor/presentation/screens/live/live_page.dart';
 import 'package:vendedor/presentation/screens/visits/visits_page.dart';
+
+import 'home/home_page.dart';
 
 class Base extends StatefulWidget {
   const Base({Key? key}) : super(key: key);

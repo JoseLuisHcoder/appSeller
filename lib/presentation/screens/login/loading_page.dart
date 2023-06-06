@@ -5,6 +5,7 @@ import 'package:vendedor/presentation/screens/base.dart';
 import 'package:vendedor/presentation/screens/login/login.dart';
 
 import '../../../data/themes.dart';
+import '../../../domain/blocs/product/product_event.dart';
 
 class LoadingPage extends StatefulWidget {
   @override
