@@ -1,8 +1,7 @@
-import 'package:ecommerce/domain/blocs/blocs.dart';
-import 'package:ecommerce/presentation/screens/base.dart';
-import 'package:ecommerce/presentation/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vendedor/domain/blocs/auth/auth_bloc.dart';
+import 'package:vendedor/presentation/screens/base.dart';
 
 import '../../../data/themes.dart';
 
@@ -50,12 +49,6 @@ class _LoginState extends State<Login> {
               context,
               MaterialPageRoute(builder: (context) => const Base()),
               (_) => false);
-        } else if (state is SuccessCartLoaded) {
-          final productBloc = BlocProvider.of<ProductBloc>(context);
-          productBloc.add(OnLoadedCartEvent());
-        } else if (state is FailureCartLoaded) {
-          final productBloc = BlocProvider.of<ProductBloc>(context);
-          productBloc.add(OnNotLoadedCartEvent());
         }
       },
       child: Scaffold(

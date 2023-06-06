@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vendedor/data/themes.dart';
+import 'package:vendedor/domain/blocs/auth/auth_bloc.dart';
 
 import 'package:vendedor/presentation/screens/base.dart';
+import 'package:vendedor/presentation/screens/login/loading_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -10,11 +13,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Material App',
-      theme: solarTheme,
-      home: const Base(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthBloc()..add(CheckLoginEvent())),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Ecommerce',
+        theme: solarTheme,
+        home: LoadingPage(),
+      ),
     );
   }
 }
