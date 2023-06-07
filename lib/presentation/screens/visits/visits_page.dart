@@ -219,7 +219,9 @@ class _VisitsPageState extends State<VisitsPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (contex) => VisitsCustomerInfo()));
+                            builder: (contex) => VisitsCustomerInfo(
+                                  customer: 1,
+                                )));
                   },
                   child: Container(
                     width: double.infinity,
@@ -289,7 +291,9 @@ class _VisitsPageState extends State<VisitsPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (contex) => VisitsCustomerInfo()));
+                            builder: (contex) => VisitsCustomerInfo(
+                                  customer: 2,
+                                )));
                   },
                   child: Container(
                     width: double.infinity,
@@ -375,7 +379,9 @@ class _VisitsPageState extends State<VisitsPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (contex) => VisitsCustomerInfo()));
+                            builder: (contex) => VisitsCustomerInfo(
+                                  customer: 3,
+                                )));
                   },
                   child: Container(
                     width: double.infinity,
@@ -445,7 +451,9 @@ class _VisitsPageState extends State<VisitsPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (contex) => VisitsCustomerInfo()));
+                            builder: (contex) => VisitsCustomerInfo(
+                                  customer: 3,
+                                )));
                   },
                   child: Container(
                     width: double.infinity,

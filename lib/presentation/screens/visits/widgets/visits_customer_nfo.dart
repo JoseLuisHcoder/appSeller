@@ -1,17 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:vendedor/domain/models/response/visit_item.dart';
+import 'package:vendedor/domain/services/visit_services.dart';
 
 import '../../../../data/themes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'cart.dart';
 
-class VisitsCustomerInfo extends StatelessWidget {
-  VisitsCustomerInfo({Key? key}) : super(key: key);
+class VisitsCustomerInfo extends StatefulWidget {
+  int customer;
+  VisitsCustomerInfo({Key? key, required this.customer}) : super(key: key);
+
+  @override
+  State<VisitsCustomerInfo> createState() => _VisitsCustomerInfoState();
+}
+
+class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   List<String> images = [
     'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png',
     'https://steemitimages.com/p/2gsjgna1uruvUuS7ndh9YqVwYGPLVszbFLwwpAYXZAxHr5bUXdS9Xbr4P7hwgSZ6JcTgdMNVgsozCDa7HdBAJJMFQJAzdvhnw28ChdsXAYEnnuk3dY?format=match&mode=fit&width=640',
     'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png'
   ];
+
+  late CustomerVisit visitCust;
+  int val = 0;
+
+  void getInfo() async {
+    final visit = await visitServices.getVisitCustomerInfo(widget.customer);
+    int value = 0;
+    if (visit == null) {
+      value = 2;
+    } else {
+      value = 1;
+    }
+    setState(() {
+      visitCust = visit!;
+      val = value;
+    });
+  }
+
+  @override
+  void initState() {
+    getInfo();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,23 +56,32 @@ class VisitsCustomerInfo extends StatelessWidget {
         backgroundColor: kWhite,
         elevation: 0,
       ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-        width: double.infinity,
-        child: Column(
-          children: [
-            _nameCompany(),
-            const Divider(),
-            _infoUser(),
-            SizedBox(height: 10),
-            _slider(),
-            const SizedBox(height: 7),
-            _agenda(),
-            SizedBox(height: 20),
-            _buttonInit(context),
-          ],
-        ),
-      ),
+      body: val == 0
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : val == 2
+              ? Center(
+                  child: Text("No se pudo cargar"),
+                )
+              : Container(
+                  padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                  width: double.infinity,
+                  child: ListView(
+                    children: [
+                      _nameCompany(),
+                      const Divider(),
+                      _infoUser(),
+                      SizedBox(height: 10),
+                      _slider(),
+                      const SizedBox(height: 7),
+                      _agenda(),
+                      SizedBox(height: 20),
+                      _buttonInit(context),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                ),
     );
   }
 
@@ -60,6 +102,12 @@ class VisitsCustomerInfo extends StatelessWidget {
                 fontSize: 16, fontWeight: FontWeight.w400, color: kWhite)),
       ),
     );
+  }
+
+  String getDays(DateTime date) {
+    DateTime today = DateTime.now();
+    int days = today.day - date.day;
+    return '$days';
   }
 
   Container _agenda() {
@@ -84,12 +132,12 @@ class VisitsCustomerInfo extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     color: kGrey100,
                     border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '06',
+                      getDays(visitCust.creationDateShoppingCart),
                       style: TextStyle(fontSize: 24),
                     ),
                     Text('Días del carro con productos',
@@ -105,12 +153,12 @@ class VisitsCustomerInfo extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     color: kGrey100,
                     border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '1200',
+                      visitCust.achievedSalesGoal.toString(),
                       style: TextStyle(fontSize: 24),
                     ),
                     Text('Galone por vender', style: TextStyle(fontSize: 12))
@@ -125,12 +173,12 @@ class VisitsCustomerInfo extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                     color: kGrey100,
                     border: Border.all(width: 1, color: kGrey400)),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'S/5800',
+                      'S/${visitCust.dailySalesGoal}',
                       style: TextStyle(fontSize: 24),
                     ),
                     Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
@@ -182,52 +230,31 @@ class VisitsCustomerInfo extends StatelessWidget {
       width: double.infinity,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
-          'VERONICA ARENAS MAMANI',
+          visitCust.name.toUpperCase(),
           style: TextStyle(fontSize: 20, color: kAppBar),
         ),
         Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Wrap(
-            spacing: 7,
-            runSpacing: 7,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: List<Widget>.generate(visitCust.tags.length, (index) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
                     color: kGrey200,
                     border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  '45 Años',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
-                    color: kGrey200,
-                    border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  'Exigente',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                    color: kGrey200,
-                    border: Border.all(width: 1, color: kGrey200),
-                    borderRadius: BorderRadius.circular(16)),
-                child: const Text(
-                  'Ocupada',
-                  style: TextStyle(fontSize: 12, color: kGrey800),
-                ),
-              ),
-            ],
-          ),
-        ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    visitCust.tags[index].tagName,
+                    style: TextStyle(fontSize: 12, color: kGrey800),
+                  ),
+                );
+              }),
+            )),
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Row(
@@ -257,8 +284,8 @@ class VisitsCustomerInfo extends StatelessWidget {
               Expanded(
                 child: Container(
                   padding: EdgeInsets.only(left: 10),
-                  child: const Text(
-                    'Veronica es unapersona que se destaca por su empatia, trato amable y valentia al enfrentar los desafios del cambio tecnologico en sus labores diarias, a pesar de no tener un titulo profesional, es de confiar, y muy cumplida en sus pagos ',
+                  child: Text(
+                    visitCust.description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 5,
                     style: TextStyle(fontSize: 14, color: kGrey600),
@@ -282,9 +309,9 @@ class VisitsCustomerInfo extends StatelessWidget {
               right: BorderSide(width: 1.0, color: kGrey200),
             ),
           ),
-          child: const Column(children: [
+          child: Column(children: [
             Text(
-              'REPRESENTACIONES CABAÑA DIESEL',
+              visitCust.businessName,
               style: TextStyle(fontSize: 20, color: kAppBar),
             ),
             Row(
@@ -294,9 +321,13 @@ class VisitsCustomerInfo extends StatelessWidget {
                   style: TextStyle(fontSize: 14, color: kGrey600),
                 ),
                 SizedBox(width: 5),
-                Text('HOY', style: TextStyle(color: kGrey800)),
+                Text(
+                    "${visitCust.lastVisit.day.toString()}/${visitCust.lastVisit.month.toString()}",
+                    style: TextStyle(color: kGrey800)),
                 SizedBox(width: 5),
-                Text('10:20 AM', style: TextStyle(color: kGrey800))
+                Text(
+                    "${visitCust.lastVisit.hour.toString()}:${visitCust.lastVisit.minute}",
+                    style: TextStyle(color: kGrey800))
               ],
             )
           ]),
@@ -304,15 +335,14 @@ class VisitsCustomerInfo extends StatelessWidget {
       ),
       Container(
         padding: EdgeInsets.only(left: 15),
-        child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Scoring',
-                style: TextStyle(fontSize: 16, color: kGrey600),
-              ),
-              Text('A14323', style: TextStyle(fontSize: 20, color: kGreen)),
-            ]),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(
+            'Scoring',
+            style: TextStyle(fontSize: 16, color: kGrey600),
+          ),
+          Text(visitCust.scoring,
+              style: TextStyle(fontSize: 20, color: kGreen)),
+        ]),
       ),
     ]);
   }

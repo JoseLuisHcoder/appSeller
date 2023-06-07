@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../data/themes.dart';
 import '../../../../widgets/card_product.dart';
 import '../../../../widgets/card_product_option2.dart';
+import 'package:timer_builder/timer_builder.dart';
+import 'dart:async';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -12,6 +15,59 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  Timer? _timer;
+  int _seconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedTime();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void remove() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("savedTimeFirst");
+  }
+
+  void _loadSavedTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? savedTime = prefs.getInt('savedTimeFirst');
+    if (savedTime != null) {
+      int currentTime = DateTime.now().millisecondsSinceEpoch;
+      int difference = (currentTime - savedTime) ~/ 1000;
+      setState(() {
+        _seconds = difference;
+      });
+    } else {
+      await prefs.setInt(
+          'savedTimeFirst', DateTime.now().millisecondsSinceEpoch);
+    }
+    _startTimer();
+  }
+
+  void _startTimer() {
+    const oneSecond = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSecond, (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
+  }
+
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String secondsStr = remainingSeconds.toString().padLeft(2, '0');
+    return '$minutesStr:$secondsStr';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +84,7 @@ class _CartState extends State<Cart> {
               decoration: BoxDecoration(
                   color: kPrimary, borderRadius: BorderRadius.circular(5)),
               child: Text(
-                '00:03:56',
+                _formatTime(_seconds),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: kWhite, fontSize: 24),
               ),
@@ -63,7 +119,10 @@ class _CartState extends State<Cart> {
       width: MediaQuery.of(context).size.width,
       height: 63,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          remove();
+          Navigator.pop(context);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: kGrey600,
         ),
