@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendedor/data/secure_storage.dart';
 import 'package:vendedor/domain/models/cart_product.dart';
 import 'package:vendedor/domain/services/cart_services.dart';
+import 'package:vendedor/presentation/screens/home/home_page.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
 
 import '../../../../data/themes.dart';
@@ -12,7 +13,7 @@ import 'package:timer_builder/timer_builder.dart';
 import 'dart:async';
 
 class Cart extends StatefulWidget {
-  Cart({super.key});
+  const Cart({super.key});
 
   @override
   State<Cart> createState() => _CartState();
@@ -83,6 +84,7 @@ class _CartState extends State<Cart> {
     int remainingSeconds = seconds % 60;
     String minutesStr = minutes.toString().padLeft(2, '0');
     String secondsStr = remainingSeconds.toString().padLeft(2, '0');
+
     return '$minutesStr:$secondsStr';
   }
 
@@ -112,18 +114,6 @@ class _CartState extends State<Cart> {
         backgroundColor: kWhite,
         elevation: 0,
       ),
-
-      // body: FutureBuilder<List<CardProduct>>(
-      //     future: cartServices.getCartByCustomer(),
-      //     builder: (context, snapshot) {
-      //       return !snapshot.hasData
-      //           ? const CircularProgressIndicator()
-      //           : ListView.builder(
-      //               itemCount: snapshot.data?.length,
-      //               itemBuilder: (context, i) {
-      //                 return CardProduct(product: snapshot.product[i]);
-      //               });
-      //     }),
       body: Container(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           child: SingleChildScrollView(

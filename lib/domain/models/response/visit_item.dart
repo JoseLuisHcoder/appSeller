@@ -325,7 +325,7 @@ class OrderPaymentHistory {
   factory OrderPaymentHistory.fromJson(Map<String, dynamic> json) {
     return OrderPaymentHistory(
       id: json['id'],
-      partialAmount: json['partial_amount'],
+      partialAmount: json['partial_amount'].toDouble(),
       dueDate: DateTime.parse(json['due_date']),
       paymentCompleted: json['payment_completed'],
     );

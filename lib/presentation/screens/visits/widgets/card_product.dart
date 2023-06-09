@@ -87,7 +87,7 @@ class _CardProductState extends State<CardProduct> {
                 ],
               ),
               Container(
-                constraints: const BoxConstraints(maxWidth: 200),
+                constraints: const BoxConstraints(maxWidth: 180),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

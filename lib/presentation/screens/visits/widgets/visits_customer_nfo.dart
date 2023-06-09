@@ -16,6 +16,8 @@ class VisitsCustomerInfo extends StatefulWidget {
 }
 
 class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
+  List<bool> _checkedList = [false, false, false];
+
   List<String> images = [
     'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png',
     'https://steemitimages.com/p/2gsjgna1uruvUuS7ndh9YqVwYGPLVszbFLwwpAYXZAxHr5bUXdS9Xbr4P7hwgSZ6JcTgdMNVgsozCDa7HdBAJJMFQJAzdvhnw28ChdsXAYEnnuk3dY?format=match&mode=fit&width=640',
@@ -38,6 +40,19 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       val = value;
     });
   }
+
+  List<String> tasks = [
+    "Dias del carro con productos",
+    "Galones por vender",
+    "Deuda por cobrar",
+    "sdfsdfsdfsdfsdfsdfsf",
+  ];
+  List<String> tasksMonts = [
+    "0",
+    "500",
+    "S/2500",
+    "25",
+  ];
 
   @override
   void initState() {
@@ -121,74 +136,115 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             style: TextStyle(fontSize: 16, color: kGrey800),
           ),
           SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+          _taskAgenda(),
+          Divider(),
+          Column(
+            children: List.generate(_checkedList.length, (index) {
+              return CheckboxListTile(
+                value: _checkedList[index],
+                title: Row(
                   children: [
+                    Expanded(child: Text(tasks[index])),
                     Text(
-                      getDays(visitCust.creationDateShoppingCart),
+                      tasksMonts[index],
                       style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Días del carro con productos',
-                        style: TextStyle(fontSize: 12))
+                    )
                   ],
                 ),
-              ),
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      visitCust.achievedSalesGoal.toString(),
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Galone por vender', style: TextStyle(fontSize: 12))
-                  ],
-                ),
-              ),
-              Container(
-                height: 84,
-                width: 104,
-                padding: EdgeInsets.symmetric(horizontal: 7),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: kGrey100,
-                    border: Border.all(width: 1, color: kGrey400)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'S/${visitCust.dailySalesGoal}',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
-                  ],
-                ),
-              )
-            ],
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (value) {
+                  setState(() {
+                    _checkedList[index] = value!;
+                  });
+                },
+              );
+            }),
           )
+          // Container(
+          //   child: ListView.builder(
+          //       itemCount: _checkedList.length,
+          //       itemBuilder: (context, index) {
+          //         return CheckboxListTile(
+          //             value: _checkedList[index],
+          //             title: Text("Item ${index + 1}"),
+          //             onChanged: (value) {
+          //               setState(() {
+          //                 _checkedList[index] = value!;
+          //               });
+          //             });
+          //       }),
+          // )
         ],
       ),
+    );
+  }
+
+  Row _taskAgenda() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Container(
+          height: 84,
+          width: 104,
+          padding: EdgeInsets.symmetric(horizontal: 7),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: kGrey100,
+              border: Border.all(width: 1, color: kGrey400)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                getDays(visitCust.creationDateShoppingCart),
+                style: TextStyle(fontSize: 24),
+              ),
+              Text('Días del carro con productos',
+                  style: TextStyle(fontSize: 12))
+            ],
+          ),
+        ),
+        Container(
+          height: 84,
+          width: 104,
+          padding: EdgeInsets.symmetric(horizontal: 7),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: kGrey100,
+              border: Border.all(width: 1, color: kGrey400)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                visitCust.achievedSalesGoal.toString(),
+                style: TextStyle(fontSize: 24),
+              ),
+              Text('Galone por vender', style: TextStyle(fontSize: 12))
+            ],
+          ),
+        ),
+        Container(
+          height: 84,
+          width: 104,
+          padding: EdgeInsets.symmetric(horizontal: 7),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: kGrey100,
+              border: Border.all(width: 1, color: kGrey400)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'S/${visitCust.dailySalesGoal}',
+                style: TextStyle(fontSize: 24),
+              ),
+              Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
+            ],
+          ),
+        )
+      ],
     );
   }
 

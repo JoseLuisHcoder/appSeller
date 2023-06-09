@@ -17,7 +17,7 @@ class Base extends StatefulWidget {
 class BaseState extends State {
   final List _pages = [
     const HomePage(),
-    VisitsPage(),
+    const VisitsPage(),
     const LivePage(),
     const DevelopmentPage()
   ];
