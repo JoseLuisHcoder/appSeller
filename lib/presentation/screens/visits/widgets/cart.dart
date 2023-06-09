@@ -1,27 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vendedor/data/secure_storage.dart';
+import 'package:vendedor/domain/models/cart_product.dart';
+import 'package:vendedor/domain/services/cart_services.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
 
 import '../../../../data/themes.dart';
-import '../../../../widgets/card_product.dart';
+// import '../../../../widgets/card_product.dart';
 import '../../../../widgets/card_product_option2.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'dart:async';
 
 class Cart extends StatefulWidget {
-  const Cart({super.key});
+  Cart({super.key});
 
   @override
   State<Cart> createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
+  List<CartProduct>? cartProducts;
+
   Timer? _timer;
   int _seconds = 0;
 
   @override
   void initState() {
     super.initState();
+    fetchData();
     _loadSavedTime();
+  }
+
+  Future<void> fetchData() async {
+    String? token = await secureStorage.readToken();
+    int customerId = int.parse(token!); // Realiza la conversión a entero
+
+    List<CartProduct>? products =
+        await cartServices.getCartByCustomer(customerId);
+    setState(() {
+      cartProducts = products;
+    });
   }
 
   @override
@@ -94,20 +112,45 @@ class _CartState extends State<Cart> {
         backgroundColor: kWhite,
         elevation: 0,
       ),
+
+      // body: FutureBuilder<List<CardProduct>>(
+      //     future: cartServices.getCartByCustomer(),
+      //     builder: (context, snapshot) {
+      //       return !snapshot.hasData
+      //           ? const CircularProgressIndicator()
+      //           : ListView.builder(
+      //               itemCount: snapshot.data?.length,
+      //               itemBuilder: (context, i) {
+      //                 return CardProduct(product: snapshot.product[i]);
+      //               });
+      //     }),
       body: Container(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               children: [
-                const CardProduct(),
-                const CardProduct(),
+                if (cartProducts == null)
+                  CircularProgressIndicator()
+                else if (cartProducts!.isEmpty)
+                  Text('No hay productos en el carrito')
+                else
+                  Container(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: cartProducts!.length,
+                        itemBuilder: (context, index) {
+                          CartProduct product = cartProducts![index];
+                          return CardProduct(product: product);
+                        }),
+                  ),
                 const SizedBox(height: 10),
                 _buttonTotal(context),
                 const SizedBox(
                   height: 10,
                 ),
                 CardProductOption2(),
+                _finishVisit(context)
               ],
             ),
           )),
@@ -119,14 +162,30 @@ class _CartState extends State<Cart> {
       width: MediaQuery.of(context).size.width,
       height: 63,
       child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: kGrey600,
+        ),
+        child: const Text('S/1800',
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.w400, color: kWhite)),
+      ),
+    );
+  }
+
+  SizedBox _finishVisit(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 63,
+      child: ElevatedButton(
         onPressed: () {
           remove();
           Navigator.pop(context);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: kGrey600,
+          backgroundColor: kPrimary,
         ),
-        child: const Text('S/1800',
+        child: const Text('Finalizar Visita',
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.w400, color: kWhite)),
       ),
