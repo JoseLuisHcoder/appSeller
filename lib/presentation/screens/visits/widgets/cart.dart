@@ -114,35 +114,33 @@ class _CartState extends State<Cart> {
         backgroundColor: kWhite,
         elevation: 0,
       ),
-      body: Container(
+      body: Padding(
           padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: [
-                if (cartProducts == null)
-                  CircularProgressIndicator()
-                else if (cartProducts!.isEmpty)
-                  Text('No hay productos en el carrito')
-                else
-                  Container(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: cartProducts!.length,
-                        itemBuilder: (context, index) {
-                          CartProduct product = cartProducts![index];
-                          return CardProduct(product: product);
-                        }),
-                  ),
-                const SizedBox(height: 10),
-                _buttonTotal(context),
-                const SizedBox(
-                  height: 10,
+          child: ListView(
+            children: [
+              if (cartProducts == null)
+                CircularProgressIndicator()
+              else if (cartProducts!.isEmpty)
+                Text('No hay productos en el carrito')
+              else
+                Container(
+                  child: ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: cartProducts!.length,
+                      itemBuilder: (context, index) {
+                        CartProduct product = cartProducts![index];
+                        return CardProduct(product: product);
+                      }),
                 ),
-                CardProductOption2(),
-                _finishVisit(context)
-              ],
-            ),
+              const SizedBox(height: 10),
+              _buttonTotal(context),
+              const SizedBox(
+                height: 10,
+              ),
+              CardProductOption2(),
+              _finishVisit(context)
+            ],
           )),
     );
   }
