@@ -71,7 +71,7 @@ class _AddMinusButtonState extends State<AddMinusButton> {
               )),
           Positioned(
               top: 0,
-              left: 41,
+              left: 55,
               child: GestureDetector(
                   onTap: widget.onPressedMore,
                   child: SizedBox(

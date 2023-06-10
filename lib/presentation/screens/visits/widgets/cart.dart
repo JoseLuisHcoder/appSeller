@@ -92,6 +92,7 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: kGrey800),
         actions: [
           Container(
             padding: EdgeInsets.fromLTRB(0, 10, 20, 10),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vendedor/data/themes.dart';
 import 'package:vendedor/presentation/screens/development/development_page.dart';
-import 'package:vendedor/presentation/screens/live/paymets_page.dart';
+import 'package:vendedor/presentation/screens/live/live_page.dart';
 
 import 'package:vendedor/presentation/screens/visits/visits_page.dart';
 

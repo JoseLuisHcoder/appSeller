@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vendedor/domain/models/response/visit_item.dart';
 import 'package:vendedor/domain/services/visit_services.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/payments.dart';
 
 import '../../../../data/themes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -64,6 +65,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: kGrey800),
         title: const Text(
           'Plan de visitas',
           style: TextStyle(color: kAppBar, fontSize: 16),
@@ -224,24 +226,30 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             ],
           ),
         ),
-        Container(
-          height: 84,
-          width: 104,
-          padding: EdgeInsets.symmetric(horizontal: 7),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: kGrey100,
-              border: Border.all(width: 1, color: kGrey400)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'S/${visitCust.dailySalesGoal}',
-                style: TextStyle(fontSize: 24),
-              ),
-              Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
-            ],
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Payments()));
+          },
+          child: Container(
+            height: 84,
+            width: 104,
+            padding: EdgeInsets.symmetric(horizontal: 7),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: kGrey100,
+                border: Border.all(width: 1, color: kGrey400)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'S/${visitCust.dailySalesGoal}',
+                  style: TextStyle(fontSize: 24),
+                ),
+                Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
+              ],
+            ),
           ),
         )
       ],
