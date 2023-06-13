@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendedor/data/secure_storage.dart';
 import 'package:vendedor/domain/models/cart_product.dart';
+import 'package:vendedor/domain/models/response/product_promotions.dart';
 import 'package:vendedor/domain/services/cart_services.dart';
+import 'package:vendedor/domain/services/product_promotions_service.dart';
 import 'package:vendedor/presentation/screens/home/home_page.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/card_product_promotions.dart';
 
 import '../../../../data/themes.dart';
 // import '../../../../widgets/card_product.dart';
@@ -21,6 +24,7 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   List<CartProduct>? cartProducts;
+  List<ProductPromotions>? productsPro;
 
   Timer? _timer;
   int _seconds = 0;
@@ -29,6 +33,7 @@ class _CartState extends State<Cart> {
   void initState() {
     super.initState();
     fetchData();
+    fetchPro();
     _loadSavedTime();
   }
 
@@ -52,6 +57,16 @@ class _CartState extends State<Cart> {
   void remove() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("savedTimeFirst");
+  }
+
+  Future<void> fetchPro() async {
+    List<ProductPromotions>? apiProducts =
+        await productPromotion.getProductsPromotions();
+    if (apiProducts != null) {
+      setState(() {
+        productsPro = apiProducts;
+      });
+    }
   }
 
   void _loadSavedTime() async {
@@ -139,7 +154,17 @@ class _CartState extends State<Cart> {
               const SizedBox(
                 height: 10,
               ),
-              CardProductOption2(),
+              if (productsPro != null)
+                ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: productsPro!.length,
+                    itemBuilder: (context, index) {
+                      ProductPromotions product = productsPro![index];
+                      // Renderizar cada producto de la API aquí
+                      return CardProductPromotions(product: product);
+                    }),
+              // CardProductOption2(),
               _finishVisit(context)
             ],
           )),
