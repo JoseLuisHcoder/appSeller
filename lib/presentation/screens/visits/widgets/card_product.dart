@@ -115,20 +115,22 @@ class _CardProductState extends State<CardProduct> {
                             ))
                       ],
                     ),
-                    AddMinusButton(
-                      onPressedMinus: () {
-                        // setState(() {
-                        //   productBloc.add(OnSubstractProductToCartEvent(
-                        //       widget.product!.product.id));
-                        // });
-                      },
-                      onPressedMore: () {
-                        // setState(() {
-                        //   productBloc.add(OnAddQuantityProductToCartEvent(
-                        //       widget.product!.product.id));
-                        // });
-                      },
-                      quantity: widget.product!.quantity,
+                    Container(
+                      child: AddMinusButton(
+                        onPressedMinus: () {
+                          // setState(() {
+                          //   productBloc.add(OnSubstractProductToCartEvent(
+                          //       widget.product!.product.id));
+                          // });
+                        },
+                        onPressedMore: () {
+                          // setState(() {
+                          //   productBloc.add(OnAddQuantityProductToCartEvent(
+                          //       widget.product!.product.id));
+                          // });
+                        },
+                        quantity: widget.product!.quantity,
+                      ),
                     ),
                     Row(
                       children: [
