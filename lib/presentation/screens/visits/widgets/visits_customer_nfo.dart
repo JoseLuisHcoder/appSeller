@@ -19,10 +19,10 @@ class VisitsCustomerInfo extends StatefulWidget {
 class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   List<bool> _checkedList = [false, false, false];
 
-  List<String> images = [
-    'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png',
-    'https://steemitimages.com/p/2gsjgna1uruvUuS7ndh9YqVwYGPLVszbFLwwpAYXZAxHr5bUXdS9Xbr4P7hwgSZ6JcTgdMNVgsozCDa7HdBAJJMFQJAzdvhnw28ChdsXAYEnnuk3dY?format=match&mode=fit&width=640',
-    'https://www.consultoriaprocesos.com/wp-content/uploads/2019/05/grafico-control-proceso-1.png'
+  List<IconData> icons = [
+    Icons.signal_cellular_alt,
+    Icons.signal_cellular_alt,
+    Icons.signal_cellular_alt,
   ];
 
   late CustomerVisit visitCust;
@@ -264,18 +264,19 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             height: 150.0, // Ajusta la altura del slider según tus necesidades
             autoPlay: false, // Habilita la reproducción automática
           ),
-          items: images.map((imageUrl) {
+          items: icons.map((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: BoxDecoration(
-                    color: Colors.grey,
+                    color: Colors.grey.shade200,
                   ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
+                  child: Icon(
+                    Icons.signal_cellular_alt,
+                    size: 80,
+                    color: Colors.grey.shade400,
                   ),
                 );
               },

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:vendedor/data/secure_storage.dart';
+import 'package:vendedor/domain/models/response/history_orders.dart';
+import 'package:vendedor/domain/services/order_services.dart';
 
 import '../../../data/themes.dart';
 
@@ -10,6 +14,98 @@ class LivePage extends StatefulWidget {
 }
 
 class _LivePageState extends State<LivePage> {
+  List<HistoryOrder> payments = [];
+  List<OrderPaymentHistory> orderWidgets = [];
+  List<OrderPaymentHistory> orderWidgets2 = [];
+  List<OrderPaymentHistory> orderWidgets3 = [];
+  OrderPaymentHistory? nextPay;
+  int tabHeight = 0;
+  double sum = 0;
+
+  DateFormat format = DateFormat("yyyy-MM-ddTHH:mm:ss");
+  List<_SalesData> data = [
+    _SalesData('Enero', 0),
+    _SalesData('Febrero', 0),
+    _SalesData('Marzo', 0),
+    _SalesData('Abril', 0),
+    _SalesData('Mayo', 0),
+    _SalesData('Junio', 0),
+    _SalesData('Julio', 0),
+    _SalesData('Agosto', 0),
+    _SalesData('Septiembre', 0),
+    _SalesData('Octubre', 0),
+    _SalesData('Noviembre', 0),
+    _SalesData('Diciembre', 0)
+  ];
+  Future<void> chargeOrders() async {
+    var idCustomer = await secureStorage.readToken();
+    var temp =
+        await orderServices.getOrdersByCustomer(int.parse(idCustomer!)) ?? [];
+
+    double sumPartialAmount = temp.fold(0, (sum, historyOrder) {
+      return sum +
+          historyOrder.order.orderPaymentHistory
+              .map((payment) => payment.partialAmount)
+              .fold(0, (partialSum, amount) => partialSum + amount);
+    });
+
+    temp.sort((a, b) => b.order.id.compareTo(a.order.id));
+
+    List<OrderPaymentHistory> orderWidgetsTemp = [];
+    List<OrderPaymentHistory> orderWidgetsComplete = [];
+    List<OrderPaymentHistory> orderWidgetsTemp2 = [];
+
+    DateTime? nextDueDate;
+
+    for (var historyOrder in temp) {
+      for (var payment in historyOrder.order.orderPaymentHistory) {
+        DateTime dueDate = format.parse(payment.dueDate);
+
+        data[dueDate.month - 1].sales =
+            data[dueDate.month - 1].sales + payment.partialAmount;
+
+        if (!payment.paymentCompleted) {
+          if (nextDueDate == null || dueDate.isBefore(nextDueDate)) {
+            nextDueDate = dueDate;
+            nextPay = payment;
+          }
+          if (dueDate.isBefore(DateTime.now())) {
+            orderWidgetsTemp.add(payment);
+          } else {
+            orderWidgetsTemp2.add(payment);
+          }
+        } else {
+          orderWidgetsComplete.add(payment);
+        }
+      }
+    }
+
+    for (var historyOrder in temp) {
+      for (var payment in historyOrder.order.orderPaymentHistory) {
+        DateTime dueDate = format.parse(payment.dueDate);
+        bool temp =
+            dueDate.isAfter(DateTime.now()) && !payment.paymentCompleted;
+        if (temp) {}
+      }
+    }
+
+    setState(() {
+      payments = temp;
+      orderWidgets = orderWidgetsTemp;
+      orderWidgets2 = orderWidgetsTemp2;
+      orderWidgets3 = orderWidgetsComplete;
+      tabHeight = orderWidgets.length;
+
+      sum = sumPartialAmount;
+    });
+  }
+
+  @override
+  initState() {
+    chargeOrders();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,109 +115,96 @@ class _LivePageState extends State<LivePage> {
           title: Text(
             'Datos en vivo',
             style: TextStyle(color: kGrey800),
-          )
-
-          //  Row(
-          //   children: [
-          //     SizedBox(
-          //         width: 48,
-          //         child: IconButton(
-          //             color: Colors.grey.shade800,
-          //             onPressed: () {},
-          //             icon: const Icon(Icons.qr_code)))
-          //   ],
-          // )
-          ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10,
+          )),
+      body: payments.isEmpty == true
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  _statusDebt(context),
+                ],
+              ),
             ),
-            // _saldo(),
-            // _linearProgress(),
-            // const SizedBox(
-            //   height: 5,
-            // ),
-            // _lineCredit(),
-            // const SizedBox(
-            //   height: 10,
-            // ),
-            // const Divider(),
-            // _balanceOutstanding(),
-            // const Divider(),
-            // _imageCenter(context),
-            // Container(
-            //   height: MediaQuery.of(context).size.height,
-            //   padding: const EdgeInsets.symmetric(horizontal: 15),
-            //   child: DefaultTabController(
-            //     length: 2,
-            //     child: Column(
-            //       children: [
-            //         TabBar(
-            //             labelColor: const Color(0xff00BBF9),
-            //             unselectedLabelColor: Colors.grey.shade800,
-            //             indicatorColor: const Color(0xff00BBF9),
-            //             tabs: const [
-            //               Tab(text: 'Deuda vencida'),
-            //               Tab(
-            //                 text: 'Deuda por vencer',
-            //               )
-            //             ]),
-            //         Expanded(
-            //             child: TabBarView(children: [
-            //           _listOrders(context),
-            //           _listOrders2(context)
-            //         ]))
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            _movements(context)
-          ],
-        ),
-      ),
     );
   }
 
-  Container _movements(BuildContext context) {
+  Container _statusDebt(BuildContext context) {
     return Container(
+      height: (tabHeight * 69) + 75,
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Expanded(
+      child: DefaultTabController(
+        length: 2,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                    width: 205,
-                    padding: EdgeInsets.symmetric(vertical: 7),
-                    decoration: BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: kBlue, width: 2)),
-                    ),
-                    child: Text('DATOS UTILES')),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 15),
-                _ordersMoviments(context),
-                _ordersMoviments4(context),
-                _ordersMoviments1(context),
-                _ordersMoviments2(context),
-                _ordersMoviments3(context),
-                _ordersMoviments6(context),
-                _ordersMoviments5(context)
-              ],
-            ),
+            TabBar(
+                onTap: (value) {
+                  setState(() {
+                    if (value == 1) {
+                      tabHeight = orderWidgets2.length;
+                    } else {
+                      tabHeight = orderWidgets.length;
+                    }
+                  });
+                },
+                labelColor: kBlue,
+                unselectedLabelColor: kTextColor,
+                indicatorColor: kBlue,
+                tabs: const [
+                  Tab(text: 'Pedidos en linea'),
+                  Tab(
+                    text: 'Pagos en linea',
+                  )
+                ]),
+            Expanded(
+                child: TabBarView(
+                    children: [_listOrders(context), _listOrders2(context)]))
           ],
         ),
       ),
     );
   }
+
+  // Container _movements(BuildContext context) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 15),
+  //     child: Expanded(
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             children: [
+  //               Container(
+  //                   width: 205,
+  //                   padding: EdgeInsets.symmetric(vertical: 7),
+  //                   decoration: BoxDecoration(
+  //                     border:
+  //                         Border(bottom: BorderSide(color: kBlue, width: 2)),
+  //                   ),
+  //                   child: Text('DATOS UTILES')),
+  //             ],
+  //           ),
+  //           Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               const SizedBox(height: 15),
+  //               _ordersMoviments(context),
+  //               _ordersMoviments4(context),
+  //               _ordersMoviments1(context),
+  //               _ordersMoviments2(context),
+  //               _ordersMoviments3(context),
+  //               _ordersMoviments6(context),
+  //               _ordersMoviments5(context)
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _ordersMoviments1(BuildContext context) {
     return Column(
@@ -668,135 +751,16 @@ class _LivePageState extends State<LivePage> {
     );
   }
 
-  Container _listOrders(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
-      child: Column(
+  Widget _listOrders(BuildContext context) {
+    List<Widget> widgets = orderWidgets.map((historyOrder) {
+      return Column(
         children: [
-          const Divider(),
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                color: Colors.grey.shade600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'P001-0005645',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade800),
-                          ),
-                          const Text(
-                            'Vencio el 12/05/2023',
-                            style: TextStyle(color: Color(0xffF86C5E)),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                'S/ 750.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
-              )
-            ],
-          ),
-          const Divider(),
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                color: Colors.grey.shade600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'P001-0005632',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade800),
-                          ),
-                          const Text(
-                            'Vencio el 10/05/2023',
-                            style: TextStyle(color: Color(0xffF86C5E)),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                'S/ 500.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
-              )
-            ],
-          ),
-          const Divider(),
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                color: Colors.grey.shade600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'P001-0005620',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade800),
-                          ),
-                          const Text(
-                            'Vencio el 02/05/2023',
-                            style: TextStyle(color: Color(0xffF86C5E)),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                'S/ 1750.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
-              )
-            ],
-          ),
           const Divider(),
           Row(
             children: [
               const Icon(
                 Icons.description_outlined,
-                color: Colors.white,
+                color: kGrey600,
               ),
               Expanded(
                 child: Row(
@@ -806,17 +770,17 @@ class _LivePageState extends State<LivePage> {
                       padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'P001-0005620',
-                            style: TextStyle(
+                            historyOrder.id.toString(),
+                            style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white),
+                                color: kTextColor),
                           ),
                           Text(
-                            'Vencio el 02/05/2023',
-                            style: TextStyle(color: Colors.white),
+                            'Venció el ${_formatDate(format.parse(historyOrder.dueDate))}',
+                            style: const TextStyle(color: kSecondary),
                           )
                         ],
                       ),
@@ -825,126 +789,69 @@ class _LivePageState extends State<LivePage> {
                 ),
               ),
               Text(
-                'S/ 3000.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
+                //'S/ ${_calculateTotalAmount(orderWidgets)}',
+                'S/ ${historyOrder.partialAmount}',
+                style: const TextStyle(fontSize: 20, color: kGrey900),
               )
             ],
           ),
         ],
+      );
+    }).toList();
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+      child: Column(
+        children: widgets,
       ),
     );
   }
 
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString()}';
+  }
+
+  String _formatDateNames(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')} de ${_getMonthName(date.month)}';
+  }
+
+  double _calculateTotalAmount(List<OrderPaymentHistory> payments) {
+    double temp =
+        payments.fold(0, (sum, payment) => sum + payment.partialAmount);
+    return double.parse(temp.toStringAsFixed(2));
+  }
+
   Container _listOrders2(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
-      child: Column(
+    List<Widget> widgets = orderWidgets2.map((historyOrder) {
+      return Column(
         children: [
-          const Divider(),
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                color: Colors.grey.shade600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'P001-0005645',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade800),
-                          ),
-                          const Text(
-                            'Vence el 12/05/2023',
-                            style: TextStyle(color: Color(0xff00BBF9)),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                'S/ 200.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
-              )
-            ],
-          ),
-          const Divider(),
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                color: Colors.grey.shade600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'P001-0005632',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade800),
-                          ),
-                          const Text(
-                            'Vence el 10/05/2023',
-                            style: TextStyle(color: Color(0xff00BBF9)),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                'S/ 150.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
-              )
-            ],
-          ),
           const Divider(),
           Row(
             children: [
               const Icon(
                 Icons.description_outlined,
-                color: Colors.white,
+                color: kGrey600,
               ),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'P001-0005620',
-                            style: TextStyle(
+                            historyOrder.id.toString(),
+                            style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.white),
+                                color: kTextColor),
                           ),
                           Text(
-                            'Vencio el 02/05/2023',
-                            style: TextStyle(color: Colors.white),
+                            'Vence el ${_formatDate(format.parse(historyOrder.dueDate))}',
+                            style: const TextStyle(color: kBlue),
                           )
                         ],
                       ),
@@ -953,13 +860,47 @@ class _LivePageState extends State<LivePage> {
                 ),
               ),
               Text(
-                'S/ 350.00',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade900),
+//'S/ ${_calculateTotalAmount(orderWidgets2)}',
+                'S/ ${historyOrder.partialAmount}',
+                style: const TextStyle(fontSize: 20, color: kGrey900),
               )
             ],
           ),
         ],
+      );
+    }).toList();
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+      child: Column(
+        children: widgets,
       ),
     );
   }
+
+  String _getMonthName(int month) {
+    List<String> monthNames = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
+    ];
+    return monthNames[month - 1];
+  }
+}
+
+class _SalesData {
+  _SalesData(this.month, this.sales);
+
+  final String month;
+  double sales;
 }
