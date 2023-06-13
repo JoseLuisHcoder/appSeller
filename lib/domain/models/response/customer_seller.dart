@@ -46,16 +46,28 @@ class ResponseData {
 
 class CustomerData {
   final int customerId;
+  final String customerName;
+  final String orderAddress;
+  final DateTime lastDayVisit;
+  final bool visited;
   final List<HistoryOrder> orders;
 
   CustomerData({
     required this.customerId,
+    required this.customerName,
+    required this.orderAddress,
+    required this.lastDayVisit,
+    required this.visited,
     required this.orders,
   });
 
   factory CustomerData.fromJson(Map<String, dynamic> json) {
     return CustomerData(
       customerId: json['customer_id'],
+      customerName: json['customer_name'],
+      orderAddress: json['order_address'],
+      lastDayVisit: DateTime.parse(json['last_day_visit']),
+      visited: json['visited'],
       orders: List<HistoryOrder>.from(
         json['orders'].map((data) => HistoryOrder.fromJson(data)),
       ),
