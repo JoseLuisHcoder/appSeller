@@ -287,28 +287,16 @@ class _VisitsPageState extends State<VisitsPage> {
                                         children: [
                                           Divider(),
                                           Text(
-<<<<<<< HEAD
-                                            result
-                                                .orders[0].order.customer.name,
-                                            style: const TextStyle(
-=======
                                             result.customerName,
                                             style: TextStyle(
->>>>>>> a66a8bf3dfdc10c08e108da6bcbc1efe12c4d894
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               color: kAppBar,
                                             ),
                                           ),
                                           Text(
-<<<<<<< HEAD
-                                            result.orders[0].order.customer
-                                                .customerAgency.name,
-                                            style: const TextStyle(
-=======
                                             result.orderAddress,
                                             style: TextStyle(
->>>>>>> a66a8bf3dfdc10c08e108da6bcbc1efe12c4d894
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               color: kAppBar,
@@ -319,15 +307,8 @@ class _VisitsPageState extends State<VisitsPage> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-<<<<<<< HEAD
-                                                result.orders[0].order
-                                                    .datePayApproximate
-                                                    .toString(),
-                                                style: const TextStyle(
-=======
                                                 result.lastDayVisit.toString(),
                                                 style: TextStyle(
->>>>>>> a66a8bf3dfdc10c08e108da6bcbc1efe12c4d894
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
                                                   color: kGrey500,
