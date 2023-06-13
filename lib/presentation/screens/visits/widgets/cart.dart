@@ -172,6 +172,19 @@ class _CartState extends State<Cart> {
   }
 
   SizedBox _buttonTotal(BuildContext context) {
+    String calculateTotalPrice() {
+      double totalPrice = 0;
+      if (cartProducts != null) {
+        for (CartProduct cartProduct in cartProducts!) {
+          double productPrice =
+              cartProduct.product.productPrice.price.toDouble();
+          int quantity = cartProduct.quantity;
+          totalPrice += (productPrice * quantity);
+        }
+      }
+      return 'S/${totalPrice.toStringAsFixed(2)}';
+    }
+
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: 63,
@@ -180,9 +193,14 @@ class _CartState extends State<Cart> {
         style: ElevatedButton.styleFrom(
           backgroundColor: kGrey600,
         ),
-        child: const Text('S/1800',
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.w400, color: kWhite)),
+        child: Text(
+          calculateTotalPrice(),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+            color: kWhite,
+          ),
+        ),
       ),
     );
   }

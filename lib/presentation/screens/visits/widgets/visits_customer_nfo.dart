@@ -228,8 +228,8 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Payments()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => PaymentsPage()));
           },
           child: Container(
             height: 84,
