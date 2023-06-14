@@ -7,16 +7,28 @@ import 'package:vendedor/domain/models/response/customer_seller.dart';
 import 'package:vendedor/domain/models/response/visit_item.dart';
 
 class CustomerServices {
-  Future<CustomerSeller?> getCustomerSeller() async {
+  Future<List<CustomerSeller>?> getCustomerSeller() async {
     final idSeller = await secureStorage.readToken();
     final resp = await http.get(
-        Uri.parse('${Environment.baseUrl}/OrderCustomer/seller/$idSeller'),
+        Uri.parse(
+            '${Environment.baseUrl}/OrderCustomer/on_route/seller/$idSeller'),
         headers: {'Accept': 'application/json'});
 
-    if (resp.statusCode == 200) {
+    final respNot = await http.get(
+        Uri.parse(
+            '${Environment.baseUrl}/OrderCustomer/not_on_route/seller/$idSeller'),
+        headers: {'Accept': 'application/json'});
+
+    if (resp.statusCode == 200 && respNot.statusCode == 200) {
       final responseCustomerSeller =
           CustomerSeller.fromJson(jsonDecode(resp.body)["body"]);
-      return responseCustomerSeller;
+      final responseCustomerSellerNot =
+          CustomerSeller.fromJson(jsonDecode(resp.body)["body"]);
+      List<CustomerSeller> response = [
+        responseCustomerSeller,
+        responseCustomerSellerNot
+      ];
+      return response;
     }
     return null;
   }

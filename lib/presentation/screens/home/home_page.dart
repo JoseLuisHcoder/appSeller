@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
 import '../../../data/themes.dart';
 
@@ -12,75 +13,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Timer? _timer;
-  int _seconds = 0;
-  bool isVisiting = false;
-
-  void _loadSavedTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? savedTime = prefs.getInt('savedTimeFirst');
-    if (savedTime != null) {
-      int currentTime = DateTime.now().millisecondsSinceEpoch;
-      int difference = (currentTime - savedTime) ~/ 1000;
-      setState(() {
-        isVisiting = true;
-        _seconds = difference;
-      });
-    } else {
-      return null;
-    }
-    _startTimer();
-  }
-
-  void _startTimer() {
-    const oneSecond = Duration(seconds: 1);
-    _timer = Timer.periodic(oneSecond, (timer) {
-      setState(() {
-        _seconds++;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedTime();
-  }
-
-  @override
-  void dispose() {
-    isVisiting = false;
-    _timer?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          actions: [
-            Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-              width: 120,
-              height: 32,
-              child: isVisiting == true
-                  ? Container(
-                      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                      width: 120,
-                      height: 32,
-                      decoration: BoxDecoration(
-                          color: kPrimary,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Text(
-                        _formatTime(_seconds),
-                        // _formatTime(widget.seconds),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: kWhite, fontSize: 24),
-                      ),
-                    )
-                  : Container(),
-            )
-          ],
+          actions: [TimerVisit()],
           title: const Text('Inicio - Dashboard',
               style: TextStyle(fontSize: 16, color: kWhite)),
         ),
