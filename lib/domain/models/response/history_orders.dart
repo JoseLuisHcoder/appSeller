@@ -110,8 +110,8 @@ class Seller {
 
 class Customer {
   int id;
-  String name;
-  String lastName;
+  String legalRepresentator;
+  String socialReason;
   String phone;
   String email;
   bool state;
@@ -124,8 +124,8 @@ class Customer {
 
   Customer({
     required this.id,
-    required this.name,
-    required this.lastName,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.phone,
     required this.email,
     required this.state,
@@ -140,8 +140,8 @@ class Customer {
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
       id: json['id'],
-      name: json['name'],
-      lastName: json['last_name'],
+      legalRepresentator: json["legal_representator"],
+      socialReason: json['social_reason'],
       phone: json['phone'],
       email: json['email'],
       state: json['state'],
