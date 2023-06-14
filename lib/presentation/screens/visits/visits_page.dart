@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vendedor/domain/models/response/customer_seller.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
 import 'package:vendedor/domain/services/customers_services.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/visits_customer_nfo.dart';
 
 import '../../../data/themes.dart';
@@ -23,9 +24,10 @@ class _VisitsPageState extends State<VisitsPage> {
       appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title: const Row(
+          title: Row(
             children: [
               Flexible(child: SearchStatic(textSearch: textSearch)),
+              TimerVisit()
             ],
           )),
       body: SingleChildScrollView(
@@ -33,36 +35,28 @@ class _VisitsPageState extends State<VisitsPage> {
         child: FutureBuilder(
             future: customerServices.getCustomerSeller(),
             builder: (BuildContext context,
-                AsyncSnapshot<CustomerSeller?> snapshot) {
+                AsyncSnapshot<List<CustomerSeller>?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
+                return const CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
               } else if (snapshot.hasError) {
                 return Text(
                     'Error: ${snapshot.error}'); // Muestra un mensaje de error si ocurre un error
               } else if (snapshot.hasData) {
-                CustomerSeller? customers = snapshot.data;
-                if (customers != null) {
-                  List<ResponseData>? responsesCompleted = customers.response
-                      .where((response) => response.results2.any((result2) =>
-                          result2.orders.any((order) => order.order.completed)))
-                      .toList();
-
-                  List<ResponseData>? responsesNotCompleted = customers.response
-                      .where((response) => response.results2.every((result2) =>
-                          result2.orders
-                              .every((order) => !order.order.completed)))
-                      .toList();
+                if (snapshot.data != null) {
+                  CustomerSeller render = snapshot.data![0];
+                  CustomerSeller onRute = snapshot.data![0];
+                  CustomerSeller notOnRute = snapshot.data![1];
                   return Column(
                     children: [
                       const SizedBox(
                         height: 10,
                       ),
-                      _saldo(customers),
-                      _linearProgress(customers),
+                      _saldo(render),
+                      _linearProgress(render),
                       const SizedBox(
                         height: 5,
                       ),
-                      _lineCredit(customers),
+                      _lineCredit(render),
                       const SizedBox(
                         height: 10,
                       ),
@@ -86,8 +80,8 @@ class _VisitsPageState extends State<VisitsPage> {
                                   ]),
                               Expanded(
                                   child: TabBarView(children: [
-                                _listOrders(context, responsesCompleted),
-                                _listOrders(context, responsesNotCompleted)
+                                _listOrders(context, onRute.response),
+                                _listOrders(context, notOnRute.response)
                               ]))
                             ],
                           ),
@@ -254,6 +248,7 @@ class _VisitsPageState extends State<VisitsPage> {
                   const Divider(),
                   ListView.builder(
                     shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     itemCount: response.results2.length,
                     itemBuilder: (context, index2) {
                       final result = response.results2[index2];

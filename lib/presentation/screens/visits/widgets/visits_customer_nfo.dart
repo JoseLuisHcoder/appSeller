@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vendedor/domain/models/response/visit_item.dart';
 import 'package:vendedor/domain/services/visit_services.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/payments.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
 import '../../../../data/themes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -70,6 +71,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
           'Plan de visitas',
           style: TextStyle(color: kAppBar, fontSize: 16),
         ),
+        actions: [TimerVisit()],
         backgroundColor: kWhite,
         elevation: 0,
       ),
