@@ -32,6 +32,19 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
     'images/ticketPromediou.jpg',
   ];
 
+  List<String> title = [
+    'Antiguedad de la deuda',
+    'Deuda vencida vs deuda por vencer',
+    'Distribución de ventas por linea',
+    'Evolución del margen de beneficio',
+    'Evolución del mix',
+    'Participación en las ventas de cada cliente',
+    'Promedio de dias de morosidad',
+    'Proyección de ventas',
+    'Tasa de crecimiento',
+    'Ticket promedio en los ultimos 6 meses',
+  ];
+
   late CustomerVisit visitCust;
   int val = 0;
 
@@ -268,7 +281,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       children: [
         CarouselSlider(
           options: CarouselOptions(
-            height: 150.0, // Ajusta la altura del slider según tus necesidades
+            height: 200.0, // Ajusta la altura del slider según tus necesidades
             autoPlay: false, // Habilita la reproducción automática
           ),
           items: images.map((imageUrl) {
@@ -289,8 +302,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 7),
-        const Text('Desarrollo del cliente')
+        // const Text('Desarrollo del cliente')
       ],
     );
   }
