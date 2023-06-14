@@ -19,10 +19,17 @@ class VisitsCustomerInfo extends StatefulWidget {
 class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   List<bool> _checkedList = [false, false, false];
 
-  List<IconData> icons = [
-    Icons.signal_cellular_alt,
-    Icons.signal_cellular_alt,
-    Icons.signal_cellular_alt,
+  List<String> images = [
+    'images/antiguedadDeudau.jpg',
+    'images/deudaVencidaPorVenceru.jpg',
+    'images/distVentasPorLineau.jpg',
+    'images/evolMargenBeneficiou.jpg',
+    'images/evolMixVentasu.jpg',
+    'images/partVentasUsuariou.jpg',
+    'images/promDiasMorosidadu.jpg',
+    'images/proyeccionVentasu.jpg',
+    'images/tasaCrecimientou.jpg',
+    'images/ticketPromediou.jpg',
   ];
 
   late CustomerVisit visitCust;
@@ -264,19 +271,18 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             height: 150.0, // Ajusta la altura del slider según tus necesidades
             autoPlay: false, // Habilita la reproducción automática
           ),
-          items: icons.map((imageUrl) {
+          items: images.map((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: Colors.grey,
                   ),
-                  child: Icon(
-                    Icons.signal_cellular_alt,
-                    size: 80,
-                    color: Colors.grey.shade400,
+                  child: Image.asset(
+                    imageUrl,
+                    fit: BoxFit.cover,
                   ),
                 );
               },
