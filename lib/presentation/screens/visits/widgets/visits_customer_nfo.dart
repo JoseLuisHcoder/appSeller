@@ -301,7 +301,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       width: double.infinity,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
-          visitCust.name.toUpperCase(),
+          visitCust.legalRepresentator.toUpperCase(),
           style: TextStyle(fontSize: 20, color: kAppBar),
         ),
         Container(
@@ -382,7 +382,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
           ),
           child: Column(children: [
             Text(
-              visitCust.businessName,
+              visitCust.socialReason,
               style: TextStyle(fontSize: 20, color: kAppBar),
             ),
             Row(

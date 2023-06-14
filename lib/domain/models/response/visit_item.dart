@@ -1,8 +1,8 @@
 class CustomerVisit {
   int id;
   CustomerItem customerItem;
-  String name;
-  String businessName;
+  String legalRepresentator;
+  String socialReason;
   DateTime lastVisit;
   String scoring;
   List<Tag> tags;
@@ -15,8 +15,8 @@ class CustomerVisit {
   CustomerVisit({
     required this.id,
     required this.customerItem,
-    required this.name,
-    required this.businessName,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.lastVisit,
     required this.scoring,
     required this.tags,
@@ -31,8 +31,8 @@ class CustomerVisit {
     return CustomerVisit(
       id: json['id'],
       customerItem: CustomerItem.fromJson(json['customerItem']),
-      name: json['name'],
-      businessName: json['business_name'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
       lastVisit: DateTime.parse(json['last_visit']),
       scoring: json['scoring'],
       tags: List<Tag>.from(json['tags'].map((x) => Tag.fromJson(x))),
@@ -48,8 +48,8 @@ class CustomerVisit {
 
 class CustomerItem {
   int id;
-  String name;
-  String lastName;
+  String legalRepresentator;
+  String socialReason;
   String phone;
   String email;
   bool state;
@@ -62,8 +62,8 @@ class CustomerItem {
 
   CustomerItem({
     required this.id,
-    required this.name,
-    required this.lastName,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.phone,
     required this.email,
     required this.state,
@@ -78,8 +78,8 @@ class CustomerItem {
   factory CustomerItem.fromJson(Map<String, dynamic> json) {
     return CustomerItem(
       id: json['id'],
-      name: json['name'],
-      lastName: json['last_name'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
       phone: json['phone'],
       email: json['email'],
       state: json['state'],
