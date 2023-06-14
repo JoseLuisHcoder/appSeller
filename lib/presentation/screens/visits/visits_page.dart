@@ -307,9 +307,7 @@ class _VisitsPageState extends State<VisitsPage> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                result.orders[0].order
-                                                    .datePayApproximate
-                                                    .toString(),
+                                                result.lastDayVisit.toString(),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
