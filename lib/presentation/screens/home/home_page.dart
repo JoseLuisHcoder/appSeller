@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vendedor/presentation/screens/home/widgets/drawer_title_app.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
 import '../../../data/themes.dart';
@@ -17,11 +18,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: kAppBar,
+          backgroundColor: kSecondary200,
           actions: [TimerVisit()],
+          iconTheme: const IconThemeData(
+            color: kIconAppbar,
+          ),
           title: const Text('Inicio - Dashboard',
-              style: TextStyle(fontSize: 18, color: kWhite)),
+              style: TextStyle(fontSize: 18, color: kTextColor)),
         ),
+        drawer: const BuildDrawer(),
         body: Column(children: [
           _textPromotions(),
           Flexible(

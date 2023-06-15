@@ -77,7 +77,7 @@ class CardProductPromotions extends StatelessWidget {
                       product.promotionsGift.isNotEmpty == true
                           ? Container(
                               padding: const EdgeInsets.all(8),
-                              color: bgPromoCardMidle,
+                              color: kPromotionBar,
                               width: double.infinity,
                               child: RichText(
                                 text: TextSpan(

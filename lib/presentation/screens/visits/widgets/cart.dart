@@ -135,7 +135,7 @@ class _CartState extends State<Cart> {
           child: ListView(
             children: [
               if (cartProducts == null)
-                CircularProgressIndicator()
+                Center(child: CircularProgressIndicator())
               else if (cartProducts!.isEmpty)
                 Text('No hay productos en el carrito')
               else
