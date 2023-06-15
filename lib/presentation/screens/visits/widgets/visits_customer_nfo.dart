@@ -19,7 +19,10 @@ class VisitsCustomerInfo extends StatefulWidget {
 
 class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   List<bool> _checkedList = [false, false, false];
-
+  bool documentosCompletar = false;
+  bool dni = false;
+  bool nombreRepresentante = false;
+  bool garantias = false;
   List<String> images = [
     'images/antiguedadDeudau.jpg',
     'images/deudaVencidaPorVenceru.jpg',
@@ -160,30 +163,126 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             style: TextStyle(fontSize: 16, color: kGrey800),
           ),
           SizedBox(height: 10),
-          _taskAgenda(),
-          Divider(),
-          Column(
-            children: List.generate(_checkedList.length, (index) {
-              return CheckboxListTile(
-                value: _checkedList[index],
-                title: Row(
-                  children: [
-                    Expanded(child: Text(tasks[index])),
-                    Text(
-                      tasksMonts[index],
-                      style: TextStyle(fontSize: 24),
-                    )
-                  ],
+          // _taskAgenda(),
+          const Divider(),
+          Column(children: [
+            ListTile(
+              leading: const Icon(Icons.shopping_cart_checkout_outlined),
+              title: const Text('Dias del Carro con productos'),
+              trailing: Text(getDays(visitCust.creationDateShoppingCart),
+                  style: TextStyle(fontSize: 24)),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.shopping_bag_outlined),
+              title: Text('Promociones no aprovechadas'),
+              trailing: Text('4', style: TextStyle(fontSize: 24)),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag_outlined),
+              title: const Text('Galones por vender'),
+              trailing: Text(visitCust.achievedSalesGoal.toString(),
+                  style: const TextStyle(fontSize: 24)),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.shopping_bag_outlined),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Deuda por cobrar'),
+                  Text('S/${visitCust.dailySalesGoal}',
+                      style: const TextStyle(fontSize: 24))
+                ],
+              ),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PaymentsPage()));
+              },
+              trailing: Icon(Icons.arrow_forward_ios_outlined),
+            ),
+            const Divider(),
+            Column(
+              children: [
+                CheckboxListTile(
+                  title: Text('Documentos por completar'),
+                  value: documentosCompletar,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      documentosCompletar = value ?? false;
+                      if (documentosCompletar) {
+                        dni = true;
+                        nombreRepresentante = true;
+                        garantias = true;
+                      } else {
+                        dni = false;
+                        nombreRepresentante = false;
+                        garantias = false;
+                      }
+                    });
+                    print(value);
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
                 ),
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (value) {
-                  setState(() {
-                    _checkedList[index] = value!;
-                  });
-                },
-              );
-            }),
-          )
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+                  child: Column(
+                    children: [
+                      CheckboxListTile(
+                        title: Text('DNI'),
+                        value: dni,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            dni = value ?? false;
+                            if (dni && nombreRepresentante && garantias) {
+                              documentosCompletar = true;
+                            } else {
+                              documentosCompletar = false;
+                            }
+                          });
+                          print(value);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                      CheckboxListTile(
+                        title: Text('Nombre de representante'),
+                        value: nombreRepresentante,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            nombreRepresentante = value ?? false;
+                            if (dni && nombreRepresentante && garantias) {
+                              documentosCompletar = true;
+                            } else {
+                              documentosCompletar = false;
+                            }
+                          });
+                          print(value);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                      CheckboxListTile(
+                        title: Text('Garantias'),
+                        value: garantias,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            garantias = value ?? false;
+                            if (dni && nombreRepresentante && garantias) {
+                              documentosCompletar = true;
+                            } else {
+                              documentosCompletar = false;
+                            }
+                          });
+                          print(value);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ])
           // Container(
           //   child: ListView.builder(
           //       itemCount: _checkedList.length,
@@ -244,7 +343,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                 visitCust.achievedSalesGoal.toString(),
                 style: TextStyle(fontSize: 24),
               ),
-              Text('Galone por vender', style: TextStyle(fontSize: 12))
+              Text('Galones por vender', style: TextStyle(fontSize: 12))
             ],
           ),
         ),

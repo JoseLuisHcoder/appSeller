@@ -116,6 +116,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          iconTheme: IconThemeData(color: kAppBar),
           elevation: 0,
           backgroundColor: appBarBackgroundColor,
           title: Text('Cuentas por cobrar')

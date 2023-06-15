@@ -17,9 +17,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: kAppBar,
           actions: [TimerVisit()],
           title: const Text('Inicio - Dashboard',
-              style: TextStyle(fontSize: 16, color: kWhite)),
+              style: TextStyle(fontSize: 18, color: kWhite)),
         ),
         body: Column(children: [
           _textPromotions(),
@@ -69,8 +70,10 @@ class _HomePageState extends State<HomePage> {
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text('Mantente bien informado sobre promociones y tus pedidos',
-              style: TextStyle(fontSize: 14)),
+          Expanded(
+            child: Text('Revisa los datos de los usuarios',
+                maxLines: 2, style: TextStyle(fontSize: 14)),
+          ),
         ],
       ),
     );
