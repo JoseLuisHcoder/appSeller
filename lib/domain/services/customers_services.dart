@@ -23,7 +23,7 @@ class CustomerServices {
       final responseCustomerSeller =
           CustomerSeller.fromJson(jsonDecode(resp.body)["body"]);
       final responseCustomerSellerNot =
-          CustomerSeller.fromJson(jsonDecode(resp.body)["body"]);
+          CustomerSeller.fromJson(jsonDecode(respNot.body)["body"]);
       List<CustomerSeller> response = [
         responseCustomerSeller,
         responseCustomerSellerNot
