@@ -86,8 +86,9 @@ class Seller {
   int id;
   String name;
   String lastName;
-  String phone;
-  String description;
+  String? phone;
+  String? description;
+  dynamic agency;
 
   Seller({
     required this.id,
@@ -95,65 +96,73 @@ class Seller {
     required this.lastName,
     required this.phone,
     required this.description,
+    required this.agency,
   });
 
   factory Seller.fromJson(Map<String, dynamic> json) {
     return Seller(
-      id: json['id'],
-      name: json['name'],
-      lastName: json['last_name'],
-      phone: json['phone'],
-      description: json['description'],
-    );
+        id: json['id'],
+        name: json['name'],
+        lastName: json['last_name'],
+        phone: json['phone'],
+        description: json['description'],
+        agency: json["agency"]);
   }
 }
 
 class Customer {
   int id;
-  String name;
-  String lastName;
-  String phone;
-  String email;
+  String identification;
+  String legalRepresentator;
+  String socialReason;
+  String? phone;
+  String? birthday;
+  String address;
   bool state;
+  int isCredit;
+  int paymentDeadline;
+  int totalCreditLine;
+  int ubiGeoId;
   CustomerType customerType;
-  CustomerCountry customerCountry;
-  CustomerIdentification customerIdentification;
   CustomerAgency customerAgency;
   CustomerPriceList customerPriceList;
-  CustomerPayment? customerPayment;
 
   Customer({
     required this.id,
-    required this.name,
-    required this.lastName,
+    required this.identification,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.phone,
-    required this.email,
+    required this.birthday,
+    required this.address,
     required this.state,
+    required this.isCredit,
+    required this.paymentDeadline,
+    required this.totalCreditLine,
+    required this.ubiGeoId,
     required this.customerType,
-    required this.customerCountry,
-    required this.customerIdentification,
     required this.customerAgency,
     required this.customerPriceList,
-    this.customerPayment,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
       id: json['id'],
-      name: json['name'],
-      lastName: json['last_name'],
+      identification: json['identification'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
       phone: json['phone'],
-      email: json['email'],
+      birthday: json['birthday'],
+      address: json['address'],
       state: json['state'],
+      isCredit: json['is_credit'],
+      paymentDeadline: json['payment_deadline'],
+      totalCreditLine: json['total_credit_line'],
+      ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
-      customerCountry: CustomerCountry.fromJson(json['customer_country']),
-      customerIdentification:
-          CustomerIdentification.fromJson(json['customer_identification']),
       customerAgency: CustomerAgency.fromJson(json['customer_agency']),
-      customerPriceList: CustomerPriceList.fromJson(json['customer_pricelist']),
-      customerPayment: json['customerPayment'] != null
-          ? CustomerPayment.fromJson(json['customerPayment'])
-          : null,
+      customerPriceList:
+          CustomerPriceList.fromJson(json['customer_price_list']),
     );
   }
 }

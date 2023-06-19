@@ -1,158 +1,258 @@
 import 'package:vendedor/domain/models/response/history_orders.dart';
 
 class CustomerSeller {
-  final int ordersCompleted;
-  final int ordersNotCompleted;
-  final List<ResponseData> response;
+  final int quantityInRout;
+  final int quantityNotInRout;
+  final List<CustomerData> onRoute;
+  final List<CustomerData> notInRoute;
 
   CustomerSeller({
-    required this.ordersCompleted,
-    required this.ordersNotCompleted,
-    required this.response,
+    required this.quantityInRout,
+    required this.quantityNotInRout,
+    required this.onRoute,
+    required this.notInRoute,
   });
 
   factory CustomerSeller.fromJson(Map<String, dynamic> json) {
     return CustomerSeller(
-      ordersCompleted: json['orders_completed'],
-      ordersNotCompleted: json['orders_not_completed'],
-      response: List<ResponseData>.from(
-        json['response'].map((data) => ResponseData.fromJson(data)),
-      ),
-    );
-  }
-}
-
-class ResponseData {
-  final int districtId;
-  final String districtName;
-  final List<CustomerData> results2;
-
-  ResponseData({
-    required this.districtId,
-    required this.districtName,
-    required this.results2,
-  });
-
-  factory ResponseData.fromJson(Map<String, dynamic> json) {
-    return ResponseData(
-      districtId: json['district_id'],
-      districtName: json['district_name'],
-      results2: List<CustomerData>.from(
-        json['results2'].map((data) => CustomerData.fromJson(data)),
+      quantityInRout: json['quantity_in_rout'],
+      quantityNotInRout: json['quantity_not_in_rout'],
+      onRoute: List<CustomerData>.from(
+          json['on_route'].map((data) => CustomerData.fromJson(data))),
+      notInRoute: List<CustomerData>.from(
+        json['not_in_route'].map((data) => CustomerData.fromJson(data)),
       ),
     );
   }
 }
 
 class CustomerData {
-  final int customerId;
-  final String customerName;
-  final String orderAddress;
-  final DateTime lastDayVisit;
+  final CustomerVisits customerId;
   final bool visited;
-  final List<HistoryOrder> orders;
 
   CustomerData({
     required this.customerId,
-    required this.customerName,
-    required this.orderAddress,
-    required this.lastDayVisit,
     required this.visited,
-    required this.orders,
   });
 
   factory CustomerData.fromJson(Map<String, dynamic> json) {
     return CustomerData(
-      customerId: json['customer_id'],
-      customerName: json['customer_name'],
-      orderAddress: json['order_address'],
-      lastDayVisit: DateTime.parse(json['last_day_visit']),
-      visited: json['visited'],
-      orders: List<HistoryOrder>.from(
-        json['orders'].map((data) => HistoryOrder.fromJson(data)),
-      ),
-    );
+        customerId: json['customer_id'], visited: json['visited']);
   }
 }
 
-class OrderData {
-  final int id;
-  final SellerData seller;
-  final CustomerData2 customer;
-  final String dateCreated;
-  final String dateDeliveryApproximate;
-  final String datePayApproximate;
-  final bool completed;
-  final List<OrderPaymentHistory> orderPaymentHistory;
-  final List<Tracking> tracking;
-  final List<Item> items;
+class CustomerVisits {
+  int id;
+  Seller seller;
+  String identification;
+  String legalRepresentator;
+  String socialReason;
+  String phone;
+  String birthday;
+  String address;
+  bool state;
+  int isCredit;
+  int paymentDeadline;
+  int totalCreditLine;
+  CustomerType customerType;
+  CustomerCurrencyType customerCurrencyType;
+  CustomerAgency customerAgency;
+  CustomerPriceList customerPriceList;
+  CustomerUbigeo customerUbigeo;
 
-  OrderData({
+  CustomerVisits({
     required this.id,
     required this.seller,
-    required this.customer,
-    required this.dateCreated,
-    required this.dateDeliveryApproximate,
-    required this.datePayApproximate,
-    required this.completed,
-    required this.orderPaymentHistory,
-    required this.tracking,
-    required this.items,
+    required this.identification,
+    required this.legalRepresentator,
+    required this.socialReason,
+    required this.phone,
+    required this.birthday,
+    required this.address,
+    required this.state,
+    required this.isCredit,
+    required this.paymentDeadline,
+    required this.totalCreditLine,
+    required this.customerType,
+    required this.customerCurrencyType,
+    required this.customerAgency,
+    required this.customerPriceList,
+    required this.customerUbigeo,
   });
 
-  factory OrderData.fromJson(Map<String, dynamic> json) {
-    return OrderData(
+  factory CustomerVisits.fromJson(Map<String, dynamic> json) {
+    return CustomerVisits(
       id: json['id'],
-      seller: SellerData.fromJson(json['seller']),
-      customer: CustomerData2.fromJson(json['customer']),
-      dateCreated: json['date_created'],
-      dateDeliveryApproximate: json['date_delivery_approximate'],
-      datePayApproximate: json['date_pay_approximate'],
-      completed: json['completed'],
-      orderPaymentHistory: List<OrderPaymentHistory>.from(
-        json['orderPaymentHistory']
-            .map((data) => OrderPaymentHistory.fromJson(data)),
-      ),
-      tracking: List<Tracking>.from(
-        json['tracking'].map((data) => Tracking.fromJson(data)),
-      ),
-      items: List<Item>.from(
-        json['items'].map((data) => Item.fromJson(data)),
-      ),
+      seller: Seller.fromJson(json['seller']),
+      identification: json['identification'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
+      phone: json['phone'],
+      birthday: json['birthday'],
+      address: json['address'],
+      state: json['state'],
+      isCredit: json['is_credit'],
+      paymentDeadline: json['payment_deadline'],
+      totalCreditLine: json['total_credit_line'],
+      customerType: CustomerType.fromJson(json['customer_type']),
+      customerCurrencyType:
+          CustomerCurrencyType.fromJson(json['customer_currency_type']),
+      customerAgency: CustomerAgency.fromJson(json['customer_agency']),
+      customerPriceList:
+          CustomerPriceList.fromJson(json['customer_price_list']),
+      customerUbigeo: CustomerUbigeo.fromJson(json['customer_ubigeo']),
     );
   }
 }
 
-class SellerData {
-  final int id;
-  final String name;
+class Seller {
+  int id;
+  String name;
+  String lastName;
+  String phone;
+  String description;
+  Agency agency;
 
-  SellerData({
+  Seller({
+    required this.id,
+    required this.name,
+    required this.lastName,
+    required this.phone,
+    required this.description,
+    required this.agency,
+  });
+
+  factory Seller.fromJson(Map<String, dynamic> json) {
+    return Seller(
+      id: json['id'],
+      name: json['name'],
+      lastName: json['last_name'],
+      phone: json['phone'],
+      description: json['description'],
+      agency: Agency.fromJson(json['agency']),
+    );
+  }
+}
+
+class Agency {
+  int id;
+  String name;
+
+  Agency({
     required this.id,
     required this.name,
   });
 
-  factory SellerData.fromJson(Map<String, dynamic> json) {
-    return SellerData(
+  factory Agency.fromJson(Map<String, dynamic> json) {
+    return Agency(
       id: json['id'],
       name: json['name'],
     );
   }
 }
 
-class CustomerData2 {
-  final int id;
-  final String name;
+class CustomerType {
+  int id;
+  String name;
+  String description;
+  int minMonthlySpent;
 
-  CustomerData2({
+  CustomerType({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.minMonthlySpent,
+  });
+
+  factory CustomerType.fromJson(Map<String, dynamic> json) {
+    return CustomerType(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      minMonthlySpent: json['min_monthly_spent'],
+    );
+  }
+}
+
+class CustomerCurrencyType {
+  int id;
+  String currencySymbol;
+  String isoCode;
+
+  CustomerCurrencyType({
+    required this.id,
+    required this.currencySymbol,
+    required this.isoCode,
+  });
+
+  factory CustomerCurrencyType.fromJson(Map<String, dynamic> json) {
+    return CustomerCurrencyType(
+      id: json['id'],
+      currencySymbol: json['currency_symbol'],
+      isoCode: json['iso_code'],
+    );
+  }
+}
+
+class CustomerAgency {
+  int id;
+  String name;
+  String code;
+
+  CustomerAgency({
+    required this.id,
+    required this.name,
+    required this.code,
+  });
+
+  factory CustomerAgency.fromJson(Map<String, dynamic> json) {
+    return CustomerAgency(
+      id: json['id'],
+      name: json['name'],
+      code: json['code'],
+    );
+  }
+}
+
+class CustomerPriceList {
+  int id;
+  String name;
+
+  CustomerPriceList({
     required this.id,
     required this.name,
   });
 
-  factory CustomerData2.fromJson(Map<String, dynamic> json) {
-    return CustomerData2(
+  factory CustomerPriceList.fromJson(Map<String, dynamic> json) {
+    return CustomerPriceList(
       id: json['id'],
       name: json['name'],
+    );
+  }
+}
+
+class CustomerUbigeo {
+  int id;
+  String department;
+  String province;
+  String district;
+  String zipCode;
+
+  CustomerUbigeo({
+    required this.id,
+    required this.department,
+    required this.province,
+    required this.district,
+    required this.zipCode,
+  });
+
+  factory CustomerUbigeo.fromJson(Map<String, dynamic> json) {
+    return CustomerUbigeo(
+      id: json['id'],
+      department: json['department'],
+      province: json['province'],
+      district: json['district'],
+      zipCode: json['zip_code'],
     );
   }
 }

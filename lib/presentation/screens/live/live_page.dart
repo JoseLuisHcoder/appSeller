@@ -38,7 +38,7 @@ class _LivePageState extends State<LivePage> {
     _SalesData('Diciembre', 0)
   ];
   Future<void> chargeOrders() async {
-    var idCustomer = await secureStorage.readToken();
+    var idCustomer = "93";
     var temp =
         await orderServices.getOrdersByCustomer(int.parse(idCustomer!)) ?? [];
 

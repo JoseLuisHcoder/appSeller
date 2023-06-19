@@ -6,7 +6,7 @@ import 'package:vendedor/data/endpoints.dart';
 class AuthServices {
   Future<int?> login({required String email, required String password}) async {
     Map<String, String> headers = {'Content-Type': 'application/json'};
-    Map<String, String> body = {'name': email, 'phone': password};
+    Map<String, String> body = {'user': email, 'password': password};
 
     http.Response resp = await http.post(
       Uri.parse('${Environment.baseUrl}/Seller/login_seller'),

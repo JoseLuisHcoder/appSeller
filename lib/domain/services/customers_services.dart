@@ -10,7 +10,7 @@ class CustomerServices {
   Future<CustomerSeller?> getCustomerSeller() async {
     final idSeller = await secureStorage.readToken();
     final resp = await http.get(
-        Uri.parse('${Environment.baseUrl}/OrderCustomer/seller/$idSeller'),
+        Uri.parse('${Environment.baseUrl}/get_plan_visits/$idSeller'),
         headers: {'Accept': 'application/json'});
 
     if (resp.statusCode == 200) {
