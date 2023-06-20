@@ -387,8 +387,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
                     fontWeight: FontWeight.w300,
                     color: kTextColor)),
             TextSpan(
-                text:
-                    'S/ ${payments[0].order.customer.customerPayment?.creditLine}',
+                text: 'S/ ${payments[0].order.customer.totalCreditLine}',
                 style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -410,7 +409,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: LinearProgressIndicator(
           color: kBlue,
-          value: sum / payments[0].order.customer.customerPayment!.creditLine,
+          value: sum / payments[0].order.customer.totalCreditLine,
           backgroundColor: kGrey200,
         ));
   }
@@ -451,7 +450,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
                       fontWeight: FontWeight.w500,
                       color: kTextColor)),
               Text(
-                  'S/ ${(payments[0].order.customer.customerPayment!.creditLine - sum).toStringAsFixed(2)}',
+                  'S/ ${(payments[0].order.customer.totalCreditLine - sum).toStringAsFixed(2)}',
                   style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
