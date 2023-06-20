@@ -45,48 +45,67 @@ class CustomerVisit {
 
 class CustomerItem {
   int id;
+  Seller seller;
+  String identification;
   String legalRepresentator;
   String socialReason;
-  String phone;
-  String email;
+  String? phone;
+  dynamic? birthday;
+  String address;
   bool state;
+  int isCredit;
+  int paymentDeadLine;
+  dynamic totalCreditLine;
+  int ubiGeoId;
   CustomerType customerType;
-  CustomerCountry customerCountry;
-  CustomerIdentification customerIdentification;
+  Map<String, dynamic> customerCurrencyType;
+  Map<String, dynamic> customerUbigeo;
   CustomerAgency customerAgency;
   CustomerPriceList customerPriceList;
-  CustomerPayment customerPayment;
 
   CustomerItem({
     required this.id,
+    required this.seller,
+    required this.identification,
     required this.legalRepresentator,
     required this.socialReason,
     required this.phone,
-    required this.email,
+    required this.birthday,
+    required this.address,
     required this.state,
+    required this.isCredit,
+    required this.paymentDeadLine,
+    required this.totalCreditLine,
+    required this.ubiGeoId,
     required this.customerType,
-    required this.customerCountry,
-    required this.customerIdentification,
+    required this.customerCurrencyType,
+    required this.customerUbigeo,
     required this.customerAgency,
     required this.customerPriceList,
-    required this.customerPayment,
   });
 
   factory CustomerItem.fromJson(Map<String, dynamic> json) {
     return CustomerItem(
       id: json['id'],
-      legalRepresentator: json['legal_representator'],
+      seller: Seller.fromJson(json["seller"]),
+      identification: json["identification"],
+      legalRepresentator: json["legal_representator"],
       socialReason: json['social_reason'],
       phone: json['phone'],
-      email: json['email'],
+      birthday:
+          json["birthday"] != null ? DateTime.parse(json["birthday"]) : null,
+      address: json['address'],
       state: json['state'],
+      paymentDeadLine: json['payment_deadline'],
+      totalCreditLine: json['total_credit_line'],
+      isCredit: json['is_credit'],
+      ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
-      customerCountry: CustomerCountry.fromJson(json['customer_country']),
-      customerIdentification:
-          CustomerIdentification.fromJson(json['customer_identification']),
+      customerCurrencyType: json['customer_currency_type'],
+      customerUbigeo: json['customer_ubigeo'],
       customerAgency: CustomerAgency.fromJson(json['customer_agency']),
-      customerPriceList: CustomerPriceList.fromJson(json['customer_pricelist']),
-      customerPayment: CustomerPayment.fromJson(json['customerPayment']),
+      customerPriceList:
+          CustomerPriceList.fromJson(json['customer_price_list']),
     );
   }
 }
@@ -284,8 +303,8 @@ class Seller {
   int id;
   String name;
   String lastName;
-  String phone;
-  String description;
+  String? phone;
+  String? description;
 
   Seller({
     required this.id,
