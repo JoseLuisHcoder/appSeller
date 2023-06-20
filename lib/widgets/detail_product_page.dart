@@ -86,7 +86,6 @@ class _DetailProductPageState extends State<DetailProductPage> {
   }
 
   Container _addButton() {
-    final productBloc = BlocProvider.of<ProductBloc>(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(
@@ -115,8 +114,6 @@ class _DetailProductPageState extends State<DetailProductPage> {
               padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
               child: ElevatedButton(
                 onPressed: () {
-                  productBloc
-                      .add(OnAddProductToCartEvent(widget.product, quantity));
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Agregado al carrito"),
                       backgroundColor: kSuccess));

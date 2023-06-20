@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:vendedor/domain/models/response/visit_item.dart';
 import 'package:vendedor/domain/services/visit_services.dart';
@@ -89,38 +91,38 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: kGrey800),
+        iconTheme: const IconThemeData(color: kGrey800),
         title: const Text(
           'Plan de visitas',
           style: TextStyle(color: kAppBar, fontSize: 16),
         ),
-        actions: [TimerVisit()],
+        actions: [const TimerVisit()],
         backgroundColor: kWhite,
         elevation: 0,
       ),
       body: val == 0
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : val == 2
-              ? Center(
+              ? const Center(
                   child: Text("No se pudo cargar"),
                 )
               : Container(
-                  padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
                   width: double.infinity,
                   child: ListView(
                     children: [
                       _nameCompany(),
                       const Divider(),
                       _infoUser(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       _slider(),
                       const SizedBox(height: 7),
                       _agenda(),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _buttonInit(context),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
@@ -132,9 +134,13 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       width: MediaQuery.of(context).size.width,
       height: 48,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           Navigator.push(
-              context, MaterialPageRoute(builder: (contex) => Cart()));
+              context,
+              MaterialPageRoute(
+                  builder: (contex) => Cart(
+                        customer: widget.customer,
+                      )));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kGreen,
@@ -157,12 +163,12 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 7),
-          Text(
+          const SizedBox(height: 7),
+          const Text(
             'Agenda',
             style: TextStyle(fontSize: 16, color: kGrey800),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           // _taskAgenda(),
           const Divider(),
           Column(children: [
@@ -170,7 +176,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
               leading: const Icon(Icons.shopping_cart_checkout_outlined),
               title: const Text('Dias del Carro con productos'),
               trailing: Text(getDays(visitCust.creationDateShoppingCart),
-                  style: TextStyle(fontSize: 24)),
+                  style: const TextStyle(fontSize: 24)),
             ),
             const Divider(),
             const ListTile(
@@ -197,16 +203,18 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                 ],
               ),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PaymentsPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PaymentsPage()));
               },
-              trailing: Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
             const Divider(),
             Column(
               children: [
                 CheckboxListTile(
-                  title: Text('Documentos por completar'),
+                  title: const Text('Documentos por completar'),
                   value: documentosCompletar,
                   onChanged: (bool? value) {
                     setState(() {
@@ -226,11 +234,11 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                   controlAffinity: ListTileControlAffinity.leading,
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
                   child: Column(
                     children: [
                       CheckboxListTile(
-                        title: Text('DNI'),
+                        title: const Text('DNI'),
                         value: dni,
                         onChanged: (bool? value) {
                           setState(() {
@@ -246,7 +254,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
                       CheckboxListTile(
-                        title: Text('Nombre de representante'),
+                        title: const Text('Nombre de representante'),
                         value: nombreRepresentante,
                         onChanged: (bool? value) {
                           setState(() {
@@ -262,7 +270,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                         controlAffinity: ListTileControlAffinity.leading,
                       ),
                       CheckboxListTile(
-                        title: Text('Garantias'),
+                        title: const Text('Garantias'),
                         value: garantias,
                         onChanged: (bool? value) {
                           setState(() {
@@ -309,7 +317,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
         Container(
           height: 84,
           width: 104,
-          padding: EdgeInsets.symmetric(horizontal: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 7),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: kGrey100,
@@ -320,9 +328,9 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             children: [
               Text(
                 getDays(visitCust.creationDateShoppingCart),
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
-              Text('Días del carro con productos',
+              const Text('Días del carro con productos',
                   style: TextStyle(fontSize: 12))
             ],
           ),
@@ -330,7 +338,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
         Container(
           height: 84,
           width: 104,
-          padding: EdgeInsets.symmetric(horizontal: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 7),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: kGrey100,
@@ -341,21 +349,21 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
             children: [
               Text(
                 visitCust.achievedSalesGoal.toString(),
-                style: TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 24),
               ),
-              Text('Galones por vender', style: TextStyle(fontSize: 12))
+              const Text('Galones por vender', style: TextStyle(fontSize: 12))
             ],
           ),
         ),
         GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => PaymentsPage()));
+                MaterialPageRoute(builder: (context) => const PaymentsPage()));
           },
           child: Container(
             height: 84,
             width: 104,
-            padding: EdgeInsets.symmetric(horizontal: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 7),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: kGrey100,
@@ -366,9 +374,9 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
               children: [
                 Text(
                   'S/${visitCust.dailySalesGoal}',
-                  style: TextStyle(fontSize: 24),
+                  style: const TextStyle(fontSize: 24),
                 ),
-                Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
+                const Text('Deuda por cobrar', style: TextStyle(fontSize: 12))
               ],
             ),
           ),
@@ -390,8 +398,8 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
               builder: (BuildContext context) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.8,
-                  margin: EdgeInsets.symmetric(horizontal: 5.0),
-                  decoration: BoxDecoration(
+                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: const BoxDecoration(
                     color: Colors.grey,
                   ),
                   child: Image.asset(
@@ -410,12 +418,12 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
 
   Container _infoUser() {
     return Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 10),
       width: double.infinity,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           visitCust.legalRepresentator.toUpperCase(),
-          style: TextStyle(fontSize: 20, color: kAppBar),
+          style: const TextStyle(fontSize: 20, color: kAppBar),
         ),
         Container(
             width: double.infinity,
@@ -434,13 +442,13 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                   ),
                   child: Text(
                     visitCust.tags[index].tagName,
-                    style: TextStyle(fontSize: 12, color: kGrey800),
+                    style: const TextStyle(fontSize: 12, color: kGrey800),
                   ),
                 );
               }),
             )),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
               Column(
@@ -467,12 +475,12 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     visitCust.description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 5,
-                    style: TextStyle(fontSize: 14, color: kGrey600),
+                    style: const TextStyle(fontSize: 14, color: kGrey600),
                   ),
                 ),
               )
@@ -487,7 +495,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
     return Row(children: [
       Expanded(
         child: Container(
-          padding: EdgeInsets.only(right: 15),
+          padding: const EdgeInsets.only(right: 15),
           decoration: const BoxDecoration(
             border: Border(
               right: BorderSide(width: 1.0, color: kGrey200),
@@ -496,36 +504,36 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
           child: Column(children: [
             Text(
               visitCust.socialReason,
-              style: TextStyle(fontSize: 20, color: kAppBar),
+              style: const TextStyle(fontSize: 20, color: kAppBar),
             ),
             Row(
               children: [
-                Text(
+                const Text(
                   'Ultima visita:',
                   style: TextStyle(fontSize: 14, color: kGrey600),
                 ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Text(
                     "${visitCust.lastVisit.day.toString()}/${visitCust.lastVisit.month.toString()}",
-                    style: TextStyle(color: kGrey800)),
-                SizedBox(width: 5),
+                    style: const TextStyle(color: kGrey800)),
+                const SizedBox(width: 5),
                 Text(
                     "${visitCust.lastVisit.hour.toString()}:${visitCust.lastVisit.minute}",
-                    style: TextStyle(color: kGrey800))
+                    style: const TextStyle(color: kGrey800))
               ],
             )
           ]),
         ),
       ),
       Container(
-        padding: EdgeInsets.only(left: 15),
+        padding: const EdgeInsets.only(left: 15),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
+          const Text(
             'Scoring',
             style: TextStyle(fontSize: 16, color: kGrey600),
           ),
           Text(visitCust.scoring,
-              style: TextStyle(fontSize: 20, color: kGreen)),
+              style: const TextStyle(fontSize: 20, color: kGreen)),
         ]),
       ),
     ]);

@@ -157,7 +157,7 @@ class Customer {
       state: json['state'],
       isCredit: json['is_credit'],
       paymentDeadline: json['payment_deadline'],
-      totalCreditLine: json['total_credit_line'],
+      totalCreditLine: json['total_credit_line'] ?? 0,
       ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
       customerAgency: CustomerAgency.fromJson(json['customer_agency']),

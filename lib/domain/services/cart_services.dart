@@ -48,22 +48,15 @@ class CartServices {
     return false;
   }
 
-  Future<List<CartProduct>?> getCartByCustomer(int idCustomer) async {
+  Future<ShoppingCart?> getCartByCustomer(int idCustomer) async {
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/ShoppingCart/customer/$idCustomer'),
         headers: {'Accept': 'application/json'});
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);
-      final cartItems = body['shopping_cart_items'];
-      List<CartProduct> cartProducts = List.generate(cartItems.length, (index) {
-        var x = cartItems[index];
-        CartProductSingle product = CartProductSingle.fromJson(x['product']);
-        return CartProduct(
-          product: product,
-          quantity: x['quantity'],
-        );
-      });
+      final cartItems = body["body"]['shoppingCart'];
+      ShoppingCart cartProducts = ShoppingCart.fromJson(cartItems);
       secureStorage.persistenCartId(body["id"].toString());
       return cartProducts;
     } else {

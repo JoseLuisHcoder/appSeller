@@ -135,7 +135,7 @@ class _CardProductState extends State<CardProduct> {
                     Row(
                       children: [
                         Text(
-                          "S/${widget.product!.product.productPrice.price}",
+                          "S/${widget.product!.promotionalTotalPrice}",
                           style: const TextStyle(
                               fontSize: 20,
                               color: kSecondary,
@@ -144,7 +144,7 @@ class _CardProductState extends State<CardProduct> {
                         const Text(' - '),
                         const Text(''),
                         Text(
-                          "S/${widget.product?.product.productPrice.price}",
+                          "S/${widget.product?.promotionalTotalPrice}",
                           style: const TextStyle(
                               decoration: TextDecoration.lineThrough,
                               color: kGrey500),

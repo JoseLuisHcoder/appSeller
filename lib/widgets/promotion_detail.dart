@@ -96,7 +96,6 @@ class _PromotionDetailState extends State<PromotionDetail> {
   }
 
   Container _addButton() {
-    final productBloc = BlocProvider.of<ProductBloc>(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Row(

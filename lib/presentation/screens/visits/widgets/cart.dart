@@ -5,6 +5,7 @@ import 'package:vendedor/domain/models/cart_product.dart';
 import 'package:vendedor/domain/models/response/product_promotions.dart';
 import 'package:vendedor/domain/services/cart_services.dart';
 import 'package:vendedor/domain/services/product_promotions_service.dart';
+import 'package:vendedor/domain/services/visit_services.dart';
 import 'package:vendedor/presentation/screens/home/home_page.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product_promotions.dart';
@@ -16,15 +17,18 @@ import 'package:timer_builder/timer_builder.dart';
 import 'dart:async';
 
 class Cart extends StatefulWidget {
-  const Cart({super.key});
+  final int customer;
+  const Cart({super.key, required this.customer});
 
   @override
   State<Cart> createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
-  List<CartProduct>? cartProducts;
+  ShoppingCart? cartProducts;
   List<ProductPromotions>? productsPro;
+  bool timer_ = false;
+  bool loading = true;
 
   Timer? _timer;
   int _seconds = 0;
@@ -38,13 +42,11 @@ class _CartState extends State<Cart> {
   }
 
   Future<void> fetchData() async {
-    String? token = await secureStorage.readToken();
-    int customerId = int.parse(token!); // Realiza la conversión a entero
-
-    List<CartProduct>? products =
-        await cartServices.getCartByCustomer(customerId);
+    ShoppingCart? products =
+        await cartServices.getCartByCustomer(widget.customer);
     setState(() {
       cartProducts = products;
+      loading = false;
     });
   }
 
@@ -76,6 +78,7 @@ class _CartState extends State<Cart> {
       int currentTime = DateTime.now().millisecondsSinceEpoch;
       int difference = (currentTime - savedTime) ~/ 1000;
       setState(() {
+        timer_ = true;
         _seconds = difference;
       });
     } else {
@@ -103,8 +106,28 @@ class _CartState extends State<Cart> {
     return '$minutesStr:$secondsStr';
   }
 
+  Future<void> startVisit(context) async {
+    final message = await visitServices.startVisit(widget.customer);
+    if (message["code"] == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kGreen));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kError));
+      _timer?.cancel();
+      remove();
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    /*timer_ == true
+        ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text("Aun tiene una visita pendiente, no puede iniciar otra."),
+            backgroundColor: kError))
+        : startVisit(context);*/
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kGrey800),
@@ -134,18 +157,19 @@ class _CartState extends State<Cart> {
           padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           child: ListView(
             children: [
-              if (cartProducts == null)
+              if (loading == true)
                 Center(child: CircularProgressIndicator())
-              else if (cartProducts!.isEmpty)
+              else if (loading == false && cartProducts == null)
                 Text('No hay productos en el carrito')
               else
                 Container(
                   child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: cartProducts!.length,
+                      itemCount: cartProducts?.shoppingCartItems.length,
                       itemBuilder: (context, index) {
-                        CartProduct product = cartProducts![index];
+                        CartProduct? product =
+                            cartProducts?.shoppingCartItems[index];
                         return CardProduct(product: product);
                       }),
                 ),
@@ -175,11 +199,8 @@ class _CartState extends State<Cart> {
     String calculateTotalPrice() {
       double totalPrice = 0;
       if (cartProducts != null) {
-        for (CartProduct cartProduct in cartProducts!) {
-          double productPrice =
-              cartProduct.product.productPrice.price.toDouble();
-          int quantity = cartProduct.quantity;
-          totalPrice += (productPrice * quantity);
+        for (CartProduct cartProduct in cartProducts!.shoppingCartItems) {
+          totalPrice += cartProduct.promotionalTotalPrice;
         }
       }
       return 'S/${totalPrice.toStringAsFixed(2)}';

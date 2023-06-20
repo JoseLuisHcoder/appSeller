@@ -21,7 +21,6 @@ class _MoreInfoOfferState extends State<MoreInfoOffer> {
   int quantity = 1;
   @override
   Widget build(BuildContext context) {
-    final productBloc = BlocProvider.of<ProductBloc>(context);
     return Container(
         color: kWhite,
         child: Column(
@@ -91,8 +90,6 @@ class _MoreInfoOfferState extends State<MoreInfoOffer> {
                   ElevatedButton(
                     onPressed: () {
                       widget.onPressedClose!();
-                      productBloc.add(
-                          OnAddProductToCartEvent(widget.product!, quantity));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: btnBgPrimary,

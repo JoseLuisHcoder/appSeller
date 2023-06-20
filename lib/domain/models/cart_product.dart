@@ -1,14 +1,76 @@
-import 'package:vendedor/domain/models/product.dart';
-import 'package:vendedor/domain/models/response/brand_item.dart';
-import 'package:vendedor/domain/models/response/product_image.dart';
-import 'package:vendedor/domain/models/response/product_price.dart';
-import 'package:flutter/material.dart';
+import 'package:vendedor/domain/models/response/history_orders.dart';
+
+class ShoppingCart {
+  int id;
+  Customer customer;
+  DateTime creationDate;
+  DateTime reservationTimeExpire;
+  List<CartProduct> shoppingCartItems;
+
+  ShoppingCart({
+    required this.id,
+    required this.customer,
+    required this.creationDate,
+    required this.reservationTimeExpire,
+    required this.shoppingCartItems,
+  });
+
+  factory ShoppingCart.fromJson(Map<String, dynamic> json) {
+    return ShoppingCart(
+      id: json['id'],
+      customer: Customer.fromJson(json['customer']),
+      creationDate: DateTime.parse(json['creation_date']),
+      reservationTimeExpire: DateTime.parse(json['reservation_time_expire']),
+      shoppingCartItems: List<CartProduct>.from(
+          json["shoppingCartItems"].map((x) => CartProduct.fromJson(x))),
+    );
+  }
+}
 
 class CartProduct {
+  int id;
   CartProductSingle product;
   int quantity;
+  int totalQuantity;
+  double initialTotalPrice;
+  double promotionalTotalPrice;
+  int quantityGifts;
+  Map<String, dynamic>? promotionsApplied;
+  bool favorite;
+  bool saved;
 
-  CartProduct({required this.product, required this.quantity});
+  CartProduct(
+      {required this.id,
+      required this.product,
+      required this.quantity,
+      required this.totalQuantity,
+      required this.initialTotalPrice,
+      required this.promotionalTotalPrice,
+      required this.quantityGifts,
+      required this.favorite,
+      required this.saved,
+      this.promotionsApplied});
+
+  factory CartProduct.fromJson(Map<String, dynamic> json) {
+    return CartProduct(
+      product: CartProductSingle.fromJson(json['product']),
+      id: json['id'],
+      quantity: json['quantity'],
+      totalQuantity: json['total_quantity'],
+      initialTotalPrice: json['initial_total_price'] is int
+          ? json['initial_total_price'].toDouble()
+          : json['initial_total_price'],
+      promotionalTotalPrice: json['promotional_total_price'] is int
+          ? json['promotional_total_price'].toDouble()
+          : json['promotional_total_price'],
+      quantityGifts: json['quantity_gifts'],
+      favorite: json['favorite'] ?? false,
+      saved: json['saved'] ?? false,
+      promotionsApplied: json['promotions_applied'] != null
+          ? json['promotions_applied']
+          : null,
+    );
+  }
 
   @override
   bool operator ==(other) {
@@ -24,7 +86,6 @@ class CartProductSingle {
   String name;
   String description;
   String? sku;
-  ProductPrice productPrice;
   List<ProductImage> productImage;
 
   CartProductSingle({
@@ -33,7 +94,6 @@ class CartProductSingle {
     required this.description,
     this.sku,
     this.productImage = const [],
-    required this.productPrice,
   });
 
   factory CartProductSingle.fromJson(Map<String, dynamic> json) {
@@ -48,26 +108,17 @@ class CartProductSingle {
       );
     }).toList();
 
-    ProductPrice productPrice;
-    if (json['product_price'] != null) {
-      productPrice = (ProductPrice.fromJson(json['product_price']));
-    } else {
-      productPrice =
-          ProductPrice(id: 1, price: 10, agencyPriceList: BrandItem());
-    }
-
     return CartProductSingle(
       id: json['id'],
       name: json['name'],
       description: json['description'],
       sku: json['sku'],
-      productPrice: productPrice,
       productImage: productImages,
     );
   }
 }
 
-CartProductSingle parseToCartProductSingle(Product product) {
+/*CartProductSingle parseToCartProductSingle(Product product) {
   return CartProductSingle(
     id: product.id,
     name: product.name,
@@ -76,4 +127,32 @@ CartProductSingle parseToCartProductSingle(Product product) {
     productPrice: product.productPrice,
     productImage: product.productImage,
   );
+}*/
+
+class ProductImage {
+  int id;
+  String urlPath;
+  String description;
+  String label;
+
+  ProductImage({
+    required this.id,
+    required this.urlPath,
+    required this.description,
+    required this.label,
+  });
+
+  factory ProductImage.fromJson(Map<String, dynamic> json) => ProductImage(
+        id: json["id"],
+        urlPath: json["url_path"],
+        description: json["description"],
+        label: json["label"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "url_path": urlPath,
+        "description": description,
+        "label": label,
+      };
 }

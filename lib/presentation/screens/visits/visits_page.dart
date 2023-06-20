@@ -59,7 +59,7 @@ class _VisitsPageState extends State<VisitsPage> {
                         ),
                         const Divider(),
                         Container(
-                          height: MediaQuery.of(context).size.height,
+                          height: MediaQuery.of(context).size.height * 2,
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: DefaultTabController(
                             length: 2,
@@ -275,40 +275,54 @@ class _VisitsPageState extends State<VisitsPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Divider(),
-                                          Text(
-                                            result["customer"]
-                                                ["legal_representator"],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: kAppBar,
+                                          Container(
+                                            width: 200,
+                                            child: Text(
+                                              result["customer"]
+                                                  ["legal_representator"],
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: kAppBar,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Text(
-                                            result["customer"]["address"],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: kAppBar,
+                                          Container(
+                                            width: 317,
+                                            child: Text(
+                                              result["customer"]["address"],
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: kAppBar,
+                                              ),
                                             ),
                                           ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                "result.lastDayVisit.toString()",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: kGrey500,
-                                                ),
-                                              ),
+                                              result["visit"]["visit"]
+                                                      .isNotEmpty
+                                                  ? Text(
+                                                      result["visit"]["visit"]
+                                                              [0]
+                                                          ["date_programmed"],
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: kGrey500,
+                                                      ),
+                                                    )
+                                                  : Text(""),
                                               const SizedBox(
                                                 width: 50,
                                               ),
                                               Text(
-                                                result["visited"] == true
+                                                result["visit"]["visited"] ==
+                                                        true
                                                     ? "Visitado"
                                                     : "",
                                                 style: const TextStyle(
