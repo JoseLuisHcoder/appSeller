@@ -45,8 +45,8 @@ class CustomerVisit {
 
 class CustomerItem {
   int id;
-  String name;
-  String lastName;
+  String legalRepresentator;
+  String socialReason;
   String phone;
   String email;
   bool state;
@@ -59,8 +59,8 @@ class CustomerItem {
 
   CustomerItem({
     required this.id,
-    required this.name,
-    required this.lastName,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.phone,
     required this.email,
     required this.state,
@@ -75,8 +75,8 @@ class CustomerItem {
   factory CustomerItem.fromJson(Map<String, dynamic> json) {
     return CustomerItem(
       id: json['id'],
-      name: json['name'],
-      lastName: json['last_name'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
       phone: json['phone'],
       email: json['email'],
       state: json['state'],

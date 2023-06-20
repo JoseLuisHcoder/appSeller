@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vendedor/domain/models/response/customer_seller.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
 import 'package:vendedor/domain/services/customers_services.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/visits_customer_nfo.dart';
 
 import '../../../data/themes.dart';
@@ -20,78 +21,75 @@ class _VisitsPageState extends State<VisitsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          title: const Row(
-            children: [
-              Flexible(child: SearchStatic(textSearch: textSearch)),
-            ],
-          )),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: FutureBuilder(
-            future: customerServices.getCustomerSeller(),
-            builder: (BuildContext context,
-                AsyncSnapshot<CustomerSeller?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
-              } else if (snapshot.hasError) {
-                return Text(
-                    'Error: ${snapshot.error}'); // Muestra un mensaje de error si ocurre un error
-              } else if (snapshot.hasData) {
-                CustomerSeller? customers = snapshot.data;
-                if (customers != null) {
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _saldo(customers),
-                      _linearProgress(customers),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      _lineCredit(customers),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Divider(),
-                      Container(
-                        height: MediaQuery.of(context).size.height,
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: DefaultTabController(
-                          length: 2,
-                          child: Column(
-                            children: [
-                              TabBar(
-                                  labelColor: const Color(0xff00BBF9),
-                                  unselectedLabelColor: Colors.grey.shade800,
-                                  indicatorColor: const Color(0xff00BBF9),
-                                  tabs: const [
-                                    Tab(text: 'Clientes en ruta'),
-                                    Tab(
-                                      text: 'Clientes fuera de ruta',
-                                    )
-                                  ]),
-                              Expanded(
-                                  child: TabBarView(children: [
-                                _listOrders(context, customers.onRoute),
-                                _listOrders(context, customers.notInRoute)
-                              ]))
-                            ],
+        appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            title: Row(
+              children: [
+                Flexible(child: SearchStatic(textSearch: textSearch)),
+                TimerVisit()
+              ],
+            )),
+        body: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: FutureBuilder(
+                future: customerServices.getCustomerSeller(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<CustomerSeller?> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
+                  } else if (snapshot.hasError) {
+                    return Text(
+                        'Error: ${snapshot.error}'); // Muestra un mensaje de error si ocurre un error
+                  } else if (snapshot.hasData) {
+                    CustomerSeller? customers = snapshot.data;
+                    if (customers != null) {
+                      return Column(children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        _saldo(customers),
+                        _linearProgress(customers),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        _lineCredit(customers),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Divider(),
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: DefaultTabController(
+                            length: 2,
+                            child: Column(
+                              children: [
+                                TabBar(
+                                    labelColor: const Color(0xff00BBF9),
+                                    unselectedLabelColor: Colors.grey.shade800,
+                                    indicatorColor: const Color(0xff00BBF9),
+                                    tabs: const [
+                                      Tab(text: 'Clientes en ruta'),
+                                      Tab(
+                                        text: 'Clientes fuera de ruta',
+                                      )
+                                    ]),
+                                Expanded(
+                                    child: TabBarView(children: [
+                                  _listOrders(context, customers.onRoute),
+                                  _listOrders(context, customers.notInRoute)
+                                ]))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
-                return Text("No se pudo cargar la data");
-              }
-              return Text("No se pudo cargar la data");
-            }),
-      ),
-    );
+                      ]);
+                    }
+                    return Text("No se pudo cargar la data");
+                  }
+                  return Text("No se pudo cargar la data");
+                })));
   }
 
   Container _lineCredit(CustomerSeller customers) {

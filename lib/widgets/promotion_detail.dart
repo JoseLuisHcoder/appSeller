@@ -295,7 +295,7 @@ class _PromotionDetailState extends State<PromotionDetail> {
                     ),
                     Icon(
                       Icons.favorite,
-                      color: icoFavActive,
+                      color: kGrey400,
                     )
                   ],
                 )

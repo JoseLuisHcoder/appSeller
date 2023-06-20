@@ -16,6 +16,7 @@ class CustomerServices {
     if (resp.statusCode == 200) {
       final responseCustomerSeller =
           CustomerSeller.fromJson(jsonDecode(resp.body)["body"]);
+
       return responseCustomerSeller;
     }
     return null;

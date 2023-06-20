@@ -1,3 +1,5 @@
+import 'package:vendedor/domain/models/response/history_orders.dart';
+
 class ResponseFavorite {
   int id;
   Customer customer;
@@ -18,74 +20,6 @@ class ResponseFavorite {
         product: Product.fromJson(json["product"]),
         date: DateTime.parse(json["date"]),
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "customer": customer.toJson(),
-        "product": product.toJson(),
-        "date": date.toIso8601String(),
-      };
-}
-
-class Customer {
-  int id;
-  String name;
-  String lastName;
-  String phone;
-  String email;
-  bool state;
-  CustomerType customerType;
-  CustomerAgency customerCountry;
-  CustomerIdentification customerIdentification;
-  CustomerAgency customerAgency;
-  CustomerAgency customerPricelist;
-  CustomerPayment customerPayment;
-
-  Customer({
-    required this.id,
-    required this.name,
-    required this.lastName,
-    required this.phone,
-    required this.email,
-    required this.state,
-    required this.customerType,
-    required this.customerCountry,
-    required this.customerIdentification,
-    required this.customerAgency,
-    required this.customerPricelist,
-    required this.customerPayment,
-  });
-
-  factory Customer.fromJson(Map<String, dynamic> json) => Customer(
-        id: json["id"],
-        name: json["name"],
-        lastName: json["last_name"],
-        phone: json["phone"],
-        email: json["email"],
-        state: json["state"],
-        customerType: CustomerType.fromJson(json["customer_type"]),
-        customerCountry: CustomerAgency.fromJson(json["customer_country"]),
-        customerIdentification:
-            CustomerIdentification.fromJson(json["customer_identification"]),
-        customerAgency: CustomerAgency.fromJson(json["customer_agency"]),
-        customerPricelist: CustomerAgency.fromJson(json["customer_pricelist"]),
-        customerPayment: CustomerPayment.fromJson(json["customerPayment"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "last_name": lastName,
-        "phone": phone,
-        "email": email,
-        "state": state,
-        "customer_type": customerType.toJson(),
-        "customer_country": customerCountry.toJson(),
-        "customer_identification": customerIdentification.toJson(),
-        "customer_agency": customerAgency.toJson(),
-        "customer_pricelist": customerPricelist.toJson(),
-        "customerPayment": customerPayment.toJson(),
-      };
 }
 
 class CustomerAgency {

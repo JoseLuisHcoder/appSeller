@@ -35,7 +35,7 @@ class BaseState extends State {
       bottomNavigationBar: BottomNavigationBar(
           showUnselectedLabels: true,
           selectedItemColor: bottomNavigationBarSelected,
-          unselectedItemColor: kAppBar,
+          unselectedItemColor: kTextColor,
           currentIndex: _selectedTab,
           onTap: (index) => _changeTab(index),
           items: const [

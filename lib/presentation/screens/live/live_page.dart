@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:vendedor/data/secure_storage.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
 import 'package:vendedor/domain/services/order_services.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
 import '../../../data/themes.dart';
 
@@ -110,6 +111,7 @@ class _LivePageState extends State<LivePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          actions: [TimerVisit()],
           elevation: 0,
           backgroundColor: Colors.white,
           title: Text(
