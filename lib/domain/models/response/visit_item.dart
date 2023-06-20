@@ -1,8 +1,7 @@
 class CustomerVisit {
   int id;
-  CustomerItem customerItem;
-  String name;
-  String businessName;
+  String legalRepresentator;
+  String socialReason;
   DateTime lastVisit;
   String scoring;
   List<Tag> tags;
@@ -14,9 +13,8 @@ class CustomerVisit {
 
   CustomerVisit({
     required this.id,
-    required this.customerItem,
-    required this.name,
-    required this.businessName,
+    required this.legalRepresentator,
+    required this.socialReason,
     required this.lastVisit,
     required this.scoring,
     required this.tags,
@@ -30,9 +28,8 @@ class CustomerVisit {
   factory CustomerVisit.fromJson(Map<String, dynamic> json) {
     return CustomerVisit(
       id: json['id'],
-      customerItem: CustomerItem.fromJson(json['customerItem']),
-      name: json['name'],
-      businessName: json['business_name'],
+      legalRepresentator: json['legal_representator'],
+      socialReason: json['social_reason'],
       lastVisit: DateTime.parse(json['last_visit']),
       scoring: json['scoring'],
       tags: List<Tag>.from(json['tags'].map((x) => Tag.fromJson(x))),

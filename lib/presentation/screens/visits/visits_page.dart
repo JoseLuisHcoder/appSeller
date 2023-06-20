@@ -42,16 +42,6 @@ class _VisitsPageState extends State<VisitsPage> {
               } else if (snapshot.hasData) {
                 CustomerSeller? customers = snapshot.data;
                 if (customers != null) {
-                  List<ResponseData>? responsesCompleted = customers.response
-                      .where((response) => response.results2.any((result2) =>
-                          result2.orders.any((order) => order.order.completed)))
-                      .toList();
-
-                  List<ResponseData>? responsesNotCompleted = customers.response
-                      .where((response) => response.results2.every((result2) =>
-                          result2.orders
-                              .every((order) => !order.order.completed)))
-                      .toList();
                   return Column(
                     children: [
                       const SizedBox(
@@ -86,8 +76,8 @@ class _VisitsPageState extends State<VisitsPage> {
                                   ]),
                               Expanded(
                                   child: TabBarView(children: [
-                                _listOrders(context, responsesCompleted),
-                                _listOrders(context, responsesNotCompleted)
+                                _listOrders(context, customers.onRoute),
+                                _listOrders(context, customers.notInRoute)
                               ]))
                             ],
                           ),
@@ -121,7 +111,7 @@ class _VisitsPageState extends State<VisitsPage> {
                     color: kAppBar)),
             TextSpan(
                 text:
-                    "${(customers.ordersCompleted + customers.ordersNotCompleted)}",
+                    "${(customers.quantityInRout + customers.quantityNotInRout)}",
                 style: TextStyle(
                     fontSize: 14,
                     fontFamily: 'Roboto',
@@ -140,8 +130,8 @@ class _VisitsPageState extends State<VisitsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: LinearProgressIndicator(
           color: const Color(0xff00BBF9),
-          value: customers.ordersCompleted /
-              (customers.ordersNotCompleted + customers.ordersCompleted),
+          value: customers.quantityInRout /
+              (customers.quantityInRout + customers.quantityNotInRout),
           backgroundColor: Colors.grey.shade200,
         ));
   }
@@ -193,7 +183,7 @@ class _VisitsPageState extends State<VisitsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(children: [
-                Text(customers.ordersCompleted.toString(),
+                Text(customers.quantityInRout.toString(),
                     style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'Roboto',
@@ -214,7 +204,7 @@ class _VisitsPageState extends State<VisitsPage> {
                         color: kAppBar)),
                 const Text(')')
               ]),
-              Text(customers.ordersNotCompleted.toString(),
+              Text(customers.quantityNotInRout.toString(),
                   style: const TextStyle(
                       fontSize: 14,
                       fontFamily: 'Roboto',
@@ -227,16 +217,16 @@ class _VisitsPageState extends State<VisitsPage> {
     );
   }
 
-  Container _listOrders(
-      BuildContext context, List<ResponseData> responsesCompleted) {
+  Container _listOrders(BuildContext context, responsesCompleted) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
       child: ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: responsesCompleted.length,
         itemBuilder: (context, index) {
-          ResponseData response = responsesCompleted[index];
+          final response = responsesCompleted[index];
           return Column(
             children: [
               Column(
@@ -245,7 +235,7 @@ class _VisitsPageState extends State<VisitsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        response.districtName,
+                        response["key"],
                         textAlign: TextAlign.start,
                         style: const TextStyle(fontSize: 20, color: kTextColor),
                       ),
@@ -253,17 +243,18 @@ class _VisitsPageState extends State<VisitsPage> {
                   ),
                   const Divider(),
                   ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: response.results2.length,
+                    itemCount: response["value"].length,
                     itemBuilder: (context, index2) {
-                      final result = response.results2[index2];
+                      final result = response["value"][index2];
                       return GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => VisitsCustomerInfo(
-                                  customer: result.customerId,
+                                  customer: result["customer"]["id"],
                                 ),
                               ),
                             );
@@ -287,7 +278,8 @@ class _VisitsPageState extends State<VisitsPage> {
                                         children: [
                                           Divider(),
                                           Text(
-                                            result.customerName,
+                                            result["customer"]
+                                                ["legal_representator"],
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
@@ -295,7 +287,7 @@ class _VisitsPageState extends State<VisitsPage> {
                                             ),
                                           ),
                                           Text(
-                                            result.orderAddress,
+                                            result["customer"]["address"],
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
@@ -307,7 +299,7 @@ class _VisitsPageState extends State<VisitsPage> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                result.lastDayVisit.toString(),
+                                                "result.lastDayVisit.toString()",
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -318,7 +310,7 @@ class _VisitsPageState extends State<VisitsPage> {
                                                 width: 50,
                                               ),
                                               Text(
-                                                result.visited == true
+                                                result["visited"] == true
                                                     ? "Visitado"
                                                     : "",
                                                 style: const TextStyle(

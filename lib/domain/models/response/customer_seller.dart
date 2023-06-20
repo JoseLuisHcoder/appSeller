@@ -3,8 +3,8 @@ import 'package:vendedor/domain/models/response/history_orders.dart';
 class CustomerSeller {
   final int quantityInRout;
   final int quantityNotInRout;
-  final List<CustomerData> onRoute;
-  final List<CustomerData> notInRoute;
+  final dynamic onRoute;
+  final dynamic notInRoute;
 
   CustomerSeller({
     required this.quantityInRout,
@@ -17,11 +17,12 @@ class CustomerSeller {
     return CustomerSeller(
       quantityInRout: json['quantity_in_rout'],
       quantityNotInRout: json['quantity_not_in_rout'],
-      onRoute: List<CustomerData>.from(
+      onRoute: json['on_route'],
+      notInRoute: json['not_in_route'],
+      /*onRoute: List<CustomerData>.from(
           json['on_route'].map((data) => CustomerData.fromJson(data))),
       notInRoute: List<CustomerData>.from(
-        json['not_in_route'].map((data) => CustomerData.fromJson(data)),
-      ),
+        json['not_in_route'].map((data) => CustomerData.fromJson(data)),*/
     );
   }
 }
