@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:vendedor/data/secure_storage.dart';
 import 'package:vendedor/domain/models/response/cart_from_seller.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
+import 'package:vendedor/domain/models/response/order_customer_seller.dart';
 import 'package:vendedor/domain/services/cart_services.dart';
 import 'package:vendedor/domain/services/order_services.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
@@ -17,95 +18,8 @@ class LivePage extends StatefulWidget {
 }
 
 class _LivePageState extends State<LivePage> {
-  List<HistoryOrder> payments = [];
-  List<OrderPaymentHistory> orderWidgets = [];
-  List<OrderPaymentHistory> orderWidgets2 = [];
-  List<OrderPaymentHistory> orderWidgets3 = [];
-  OrderPaymentHistory? nextPay;
-  int tabHeight = 0;
-  double sum = 0;
-
-  DateFormat format = DateFormat("yyyy-MM-ddTHH:mm:ss");
-  List<_SalesData> data = [
-    _SalesData('Enero', 0),
-    _SalesData('Febrero', 0),
-    _SalesData('Marzo', 0),
-    _SalesData('Abril', 0),
-    _SalesData('Mayo', 0),
-    _SalesData('Junio', 0),
-    _SalesData('Julio', 0),
-    _SalesData('Agosto', 0),
-    _SalesData('Septiembre', 0),
-    _SalesData('Octubre', 0),
-    _SalesData('Noviembre', 0),
-    _SalesData('Diciembre', 0)
-  ];
-  Future<void> chargeOrders() async {
-    var idCustomer = "93";
-    var temp =
-        await orderServices.getOrdersByCustomer(int.parse(idCustomer!)) ?? [];
-
-    double sumPartialAmount = temp.fold(0, (sum, historyOrder) {
-      return sum +
-          historyOrder.order.orderPaymentHistory
-              .map((payment) => payment.partialAmount)
-              .fold(0, (partialSum, amount) => partialSum + amount);
-    });
-
-    temp.sort((a, b) => b.order.id.compareTo(a.order.id));
-
-    List<OrderPaymentHistory> orderWidgetsTemp = [];
-    List<OrderPaymentHistory> orderWidgetsComplete = [];
-    List<OrderPaymentHistory> orderWidgetsTemp2 = [];
-
-    DateTime? nextDueDate;
-
-    for (var historyOrder in temp) {
-      for (var payment in historyOrder.order.orderPaymentHistory) {
-        DateTime dueDate = format.parse(payment.dueDate);
-
-        data[dueDate.month - 1].sales =
-            data[dueDate.month - 1].sales + payment.partialAmount;
-
-        if (!payment.paymentCompleted) {
-          if (nextDueDate == null || dueDate.isBefore(nextDueDate)) {
-            nextDueDate = dueDate;
-            nextPay = payment;
-          }
-          if (dueDate.isBefore(DateTime.now())) {
-            orderWidgetsTemp.add(payment);
-          } else {
-            orderWidgetsTemp2.add(payment);
-          }
-        } else {
-          orderWidgetsComplete.add(payment);
-        }
-      }
-    }
-
-    for (var historyOrder in temp) {
-      for (var payment in historyOrder.order.orderPaymentHistory) {
-        DateTime dueDate = format.parse(payment.dueDate);
-        bool temp =
-            dueDate.isAfter(DateTime.now()) && !payment.paymentCompleted;
-        if (temp) {}
-      }
-    }
-
-    setState(() {
-      payments = temp;
-      orderWidgets = orderWidgetsTemp;
-      orderWidgets2 = orderWidgetsTemp2;
-      orderWidgets3 = orderWidgetsComplete;
-      tabHeight = orderWidgets.length;
-
-      sum = sumPartialAmount;
-    });
-  }
-
   @override
   initState() {
-    chargeOrders();
     super.initState();
   }
 
@@ -113,26 +27,24 @@ class _LivePageState extends State<LivePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          actions: [TimerVisit()],
+          actions: [const TimerVisit()],
           elevation: 0,
           backgroundColor: Colors.white,
-          title: Text(
+          title: const Text(
             'Datos en vivo',
             style: TextStyle(color: kGrey800),
           )),
-      body: payments.isEmpty == true
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _statusDebt(context),
-                ],
-              ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 10,
             ),
+            _statusDebt(context),
+          ],
+        ),
+      ),
     );
   }
 
@@ -144,20 +56,11 @@ class _LivePageState extends State<LivePage> {
         length: 2,
         child: Column(
           children: [
-            TabBar(
-                onTap: (value) {
-                  setState(() {
-                    if (value == 1) {
-                      tabHeight = orderWidgets2.length;
-                    } else {
-                      tabHeight = orderWidgets.length;
-                    }
-                  });
-                },
+            const TabBar(
                 labelColor: kBlue,
                 unselectedLabelColor: kTextColor,
                 indicatorColor: kBlue,
-                tabs: const [
+                tabs: [
                   Tab(text: 'Pedidos en linea'),
                   Tab(
                     text: 'Pagos en linea',
@@ -169,7 +72,7 @@ class _LivePageState extends State<LivePage> {
                 future: cartServices.getCartBySeller(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
@@ -178,23 +81,23 @@ class _LivePageState extends State<LivePage> {
                       return _buildOrderList(cartSeller);
                     }
 
-                    return Text("");
+                    return const Text("");
                   }
                 },
               ),
               FutureBuilder(
-                future: cartServices.getCartBySeller(),
+                future: cartServices.getOrderCustomerBySeller(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
                     if (snapshot.data != null) {
-                      CartSeller cartSeller = snapshot.data!;
-                      return _buildPaymentList(cartSeller.response);
+                      OrderCustomerSeller orderSeller = snapshot.data!;
+                      return _buildPaymentList(orderSeller);
                     }
-                    return Text("");
+                    return const Text("");
                   }
                 },
               ),
@@ -259,13 +162,13 @@ class _LivePageState extends State<LivePage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Productos en carrito',
                           // historyOrder.id.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: kTextColor),
@@ -273,7 +176,7 @@ class _LivePageState extends State<LivePage> {
                         Row(children: [
                           Text(
                             '05 Jun - ',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: kGrey400),
@@ -282,7 +185,7 @@ class _LivePageState extends State<LivePage> {
                           ),
                           Text(
                             'RC001-000660',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: kGrey400),
@@ -294,11 +197,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               '5',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -322,13 +225,13 @@ class _LivePageState extends State<LivePage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Productos en promocion',
                           // historyOrder.id.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: kTextColor),
@@ -336,7 +239,7 @@ class _LivePageState extends State<LivePage> {
                         Text(
                           '05 Jun',
                           // 'Venció el ${_formatDate(format.parse(historyOrder.dueDate))}',
-                          style: const TextStyle(color: kGrey600),
+                          style: TextStyle(color: kGrey600),
                         )
                       ],
                     ),
@@ -344,11 +247,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               '7',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey900),
+              style: TextStyle(fontSize: 24, color: kGrey900),
             )
           ],
         ),
@@ -376,12 +279,12 @@ class _LivePageState extends State<LivePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          child: Text(
+                          child: const Text(
                             'Linea de credito',
 
                             // historyOrder.id.toString(),
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: kTextColor),
@@ -393,11 +296,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               'S/15000',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -425,12 +328,12 @@ class _LivePageState extends State<LivePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          child: Text(
+                          child: const Text(
                             'Promociones no aprovechadas',
 
                             // historyOrder.id.toString(),
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: kTextColor),
@@ -442,11 +345,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               '15',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -474,12 +377,12 @@ class _LivePageState extends State<LivePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          child: Text(
+                          child: const Text(
                             'Saldo en linea de credito',
 
                             // historyOrder.id.toString(),
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: kTextColor),
@@ -491,11 +394,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               'S/7800',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -519,13 +422,13 @@ class _LivePageState extends State<LivePage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Productos devueltos',
                           // historyOrder.id.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: kTextColor),
@@ -536,11 +439,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               '3',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -564,13 +467,13 @@ class _LivePageState extends State<LivePage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                    child: Column(
+                    child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Productos cancelados',
                           // historyOrder.id.toString(),
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: kTextColor),
@@ -578,7 +481,7 @@ class _LivePageState extends State<LivePage> {
                         Row(children: [
                           Text(
                             '05 Jun - ',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: kGrey400),
@@ -587,7 +490,7 @@ class _LivePageState extends State<LivePage> {
                           ),
                           Text(
                             'RC001-000660',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: kGrey400),
@@ -599,11 +502,11 @@ class _LivePageState extends State<LivePage> {
                 ],
               ),
             ),
-            Text(
+            const Text(
               '2',
               //'S/ ${_calculateTotalAmount(orderWidgets)}',
               // 'S/ ${historyOrder.partialAmount}',
-              style: const TextStyle(fontSize: 24, color: kGrey800),
+              style: TextStyle(fontSize: 24, color: kGrey800),
             )
           ],
         ),
@@ -671,9 +574,9 @@ class _LivePageState extends State<LivePage> {
           const SizedBox(
             height: 4,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text('Saldo pendiente',
                   style: TextStyle(
                       fontSize: 12,
@@ -740,15 +643,15 @@ class _LivePageState extends State<LivePage> {
   Container _saldo() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
+          SizedBox(
             height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text('Consumido',
                   style: TextStyle(
                       fontSize: 12,
@@ -763,12 +666,12 @@ class _LivePageState extends State<LivePage> {
                       color: Color(0xff525252))),
             ],
           ),
-          const SizedBox(
+          SizedBox(
             height: 7,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text('S/ 3000.00',
                   style: TextStyle(
                       fontSize: 14,
@@ -794,7 +697,7 @@ class _LivePageState extends State<LivePage> {
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: cartSeller.response.length,
         itemBuilder: (context, index) {
@@ -814,9 +717,8 @@ class _LivePageState extends State<LivePage> {
                       ),
                     ],
                   ),
-                  const Divider(),
                   ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: response.results2.length,
                     itemBuilder: (context, index2) {
@@ -847,12 +749,12 @@ class _LivePageState extends State<LivePage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Divider(),
+                                        const Divider(),
                                         Container(
                                           width: 200,
                                           child: Text(
                                             result.customerName,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               color: Colors.blue,
@@ -875,8 +777,6 @@ class _LivePageState extends State<LivePage> {
                   const Divider(),
                 ],
               ),
-              Divider(),
-              // Agrega más elementos de la lista aquí según tus necesidades
             ],
           );
         },
@@ -884,189 +784,97 @@ class _LivePageState extends State<LivePage> {
     );
   }
 
-  Widget _buildPaymentList(List<Response> responseList) {
-    // Implementa la construcción de la lista de pagos
-    return Container();
-  }
-
-  Widget _listOrders(BuildContext context, CartSeller cartSeller) {
-    return Container(
-      height: (tabHeight * 69) + 75,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            TabBar(
-              onTap: (value) {
-                // Tu lógica de cambio de pestaña
-              },
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.black,
-              indicatorColor: Colors.blue,
-              tabs: const [
-                Tab(text: 'Pedidos en línea'),
-                Tab(text: 'Pagos en línea'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    List<Widget> widgets = orderWidgets.map((historyOrder) {
-      return Column(
-        children: [
-          const Divider(),
-          Row(
-            children: [
-              const Icon(
-                Icons.description_outlined,
-                color: kGrey600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            historyOrder.id.toString(),
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: kTextColor),
-                          ),
-                          Text(
-                            'Venció el ${_formatDate(format.parse(historyOrder.dueDate))}',
-                            style: const TextStyle(color: kSecondary),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-                //'S/ ${_calculateTotalAmount(orderWidgets)}',
-                'S/ ${historyOrder.partialAmount}',
-                style: const TextStyle(fontSize: 20, color: kGrey900),
-              )
-            ],
-          ),
-        ],
-      );
-    }).toList();
-
+  Widget _buildPaymentList(OrderCustomerSeller cartSeller) {
+    double totalPrice = 0.0;
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
-      child: Column(
-        children: widgets,
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString()}';
-  }
-
-  String _formatDateNames(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')} de ${_getMonthName(date.month)}';
-  }
-
-  double _calculateTotalAmount(List<OrderPaymentHistory> payments) {
-    double temp =
-        payments.fold(0, (sum, payment) => sum + payment.partialAmount);
-    return double.parse(temp.toStringAsFixed(2));
-  }
-
-  Container _listOrders2(BuildContext context) {
-    List<Widget> widgets = orderWidgets2.map((historyOrder) {
-      return Column(
-        children: [
-          const Divider(),
-          Row(
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: cartSeller.response.length,
+        itemBuilder: (context, index) {
+          final response = cartSeller.response[index];
+          return Column(
             children: [
-              const Icon(
-                Icons.description_outlined,
-                color: kGrey600,
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            historyOrder.id.toString(),
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: kTextColor),
-                          ),
-                          Text(
-                            'Vence el ${_formatDate(format.parse(historyOrder.dueDate))}',
-                            style: const TextStyle(color: kBlue),
-                          )
-                        ],
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        response.ubiGeoName,
+                        textAlign: TextAlign.start,
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.black),
                       ),
-                    )
-                  ],
-                ),
-              ),
-              Text(
-//'S/ ${_calculateTotalAmount(orderWidgets2)}',
-                'S/ ${historyOrder.partialAmount}',
-                style: const TextStyle(fontSize: 20, color: kGrey900),
-              )
-            ],
-          ),
-        ],
-      );
-    }).toList();
+                    ],
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: response.results2.length != 0 ? 1 : 0,
+                    itemBuilder: (context, index2) {
+                      final result = response.results2[index2];
+                      for (final item in result.orders) {
+                        totalPrice += (item.order.finalPrice >= 0
+                            ? item.order.finalPrice
+                            : 0);
+                      }
 
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
-      child: Column(
-        children: widgets,
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.account_circle_outlined,
+                                color: Colors.grey.shade600,
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.65,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Divider(),
+                                        Container(
+                                          width: 200,
+                                          child: Text(
+                                            result.customerName,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.blue,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text("S/.${totalPrice.toStringAsFixed(2)}")
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
-
-  String _getMonthName(int month) {
-    List<String> monthNames = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre'
-    ];
-    return monthNames[month - 1];
-  }
-}
-
-class _SalesData {
-  _SalesData(this.month, this.sales);
-
-  final String month;
-  double sales;
 }

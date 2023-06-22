@@ -7,6 +7,7 @@ import 'package:vendedor/domain/models/cart_product.dart';
 import 'package:vendedor/domain/models/response/cart_from_seller.dart';
 import 'package:vendedor/domain/models/response/close_cart.dart';
 import 'package:http/http.dart' as http;
+import 'package:vendedor/domain/models/response/order_customer_seller.dart';
 
 class CartServices {
   Future<int> addShopingCart(
@@ -100,6 +101,23 @@ class CartServices {
       final body = jsonDecode(resp.body);
       final cartItems = body["body"];
       CartSeller cartProducts = CartSeller.fromJson(cartItems);
+      return cartProducts;
+    } else {
+      return null;
+    }
+  }
+
+  Future<OrderCustomerSeller?> getOrderCustomerBySeller() async {
+    final idSeller = await secureStorage.readToken();
+    final resp = await http.get(
+        Uri.parse('${Environment.baseUrl}/OrderCustomer/seller/$idSeller'),
+        headers: {'Accept': 'application/json'});
+    log(resp.body);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      final cartItems = body["body"];
+      OrderCustomerSeller cartProducts =
+          OrderCustomerSeller.fromJson(cartItems);
       return cartProducts;
     } else {
       return null;

@@ -183,33 +183,6 @@ class ShoppingCartItem {
   }
 }
 
-class Product {
-  List<ProductImage> productImage;
-  int id;
-  String name;
-  String description;
-  String sku;
-
-  Product({
-    required this.productImage,
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.sku,
-  });
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      productImage: List<ProductImage>.from(
-          json['product_image'].map((x) => ProductImage.fromJson(x))),
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      sku: json['sku'],
-    );
-  }
-}
-
 class PromotionsApplied {
   dynamic id;
   dynamic name;
