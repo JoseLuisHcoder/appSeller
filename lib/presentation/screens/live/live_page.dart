@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vendedor/data/secure_storage.dart';
+import 'package:vendedor/domain/models/response/cart_from_seller.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
+import 'package:vendedor/domain/services/cart_services.dart';
 import 'package:vendedor/domain/services/order_services.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
@@ -136,7 +138,7 @@ class _LivePageState extends State<LivePage> {
 
   Container _statusDebt(BuildContext context) {
     return Container(
-      height: (tabHeight * 69) + 75,
+      height: 1000,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: DefaultTabController(
         length: 2,
@@ -162,8 +164,41 @@ class _LivePageState extends State<LivePage> {
                   )
                 ]),
             Expanded(
-                child: TabBarView(
-                    children: [_listOrders(context), _listOrders2(context)]))
+                child: TabBarView(children: [
+              FutureBuilder(
+                future: cartServices.getCartBySeller(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    if (snapshot.data != null) {
+                      CartSeller cartSeller = snapshot.data!;
+                      return _buildOrderList(cartSeller);
+                    }
+
+                    return Text("");
+                  }
+                },
+              ),
+              FutureBuilder(
+                future: cartServices.getCartBySeller(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    if (snapshot.data != null) {
+                      CartSeller cartSeller = snapshot.data!;
+                      return _buildPaymentList(cartSeller.response);
+                    }
+                    return Text("");
+                  }
+                },
+              ),
+            ]))
           ],
         ),
       ),
@@ -753,7 +788,136 @@ class _LivePageState extends State<LivePage> {
     );
   }
 
-  Widget _listOrders(BuildContext context) {
+  Widget _buildOrderList(CartSeller cartSeller) {
+    double totalPrice = 0.0;
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
+      child: ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: cartSeller.response.length,
+        itemBuilder: (context, index) {
+          final response = cartSeller.response[index];
+          return Column(
+            children: [
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        response.ubiGeoName,
+                        textAlign: TextAlign.start,
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: response.results2.length,
+                    itemBuilder: (context, index2) {
+                      final result = response.results2[index2];
+                      for (final item in result.shoppingCart) {
+                        for (final shoppingCartItem in item.shoppingCartItems) {
+                          totalPrice += shoppingCartItem.promotionalTotalPrice;
+                        }
+                      }
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.account_circle_outlined,
+                                color: Colors.grey.shade600,
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.65,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Divider(),
+                                        Container(
+                                          width: 200,
+                                          child: Text(
+                                            result.customerName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.blue,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text("S/.${totalPrice.toStringAsFixed(2)}")
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                ],
+              ),
+              Divider(),
+              // Agrega más elementos de la lista aquí según tus necesidades
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPaymentList(List<Response> responseList) {
+    // Implementa la construcción de la lista de pagos
+    return Container();
+  }
+
+  Widget _listOrders(BuildContext context, CartSeller cartSeller) {
+    return Container(
+      height: (tabHeight * 69) + 75,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            TabBar(
+              onTap: (value) {
+                // Tu lógica de cambio de pestaña
+              },
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.black,
+              indicatorColor: Colors.blue,
+              tabs: const [
+                Tab(text: 'Pedidos en línea'),
+                Tab(text: 'Pagos en línea'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
     List<Widget> widgets = orderWidgets.map((historyOrder) {
       return Column(
         children: [
