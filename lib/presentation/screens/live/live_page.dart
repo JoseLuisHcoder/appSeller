@@ -692,7 +692,6 @@ class _LivePageState extends State<LivePage> {
   }
 
   Widget _buildOrderList(CartSeller cartSeller) {
-    double totalPrice = 0.0;
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
@@ -722,6 +721,7 @@ class _LivePageState extends State<LivePage> {
                     shrinkWrap: true,
                     itemCount: response.results2.length,
                     itemBuilder: (context, index2) {
+                      double totalPrice = 0.0;
                       final result = response.results2[index2];
                       for (final item in result.shoppingCart) {
                         for (final shoppingCartItem in item.shoppingCartItems) {
@@ -785,7 +785,6 @@ class _LivePageState extends State<LivePage> {
   }
 
   Widget _buildPaymentList(OrderCustomerSeller cartSeller) {
-    double totalPrice = 0.0;
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
@@ -815,6 +814,7 @@ class _LivePageState extends State<LivePage> {
                     shrinkWrap: true,
                     itemCount: response.results2.length != 0 ? 1 : 0,
                     itemBuilder: (context, index2) {
+                      double totalPrice = 0.0;
                       final result = response.results2[index2];
                       for (final item in result.orders) {
                         totalPrice += (item.order.finalPrice >= 0
@@ -836,7 +836,7 @@ class _LivePageState extends State<LivePage> {
                                 children: [
                                   Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.65,
+                                        0.58,
                                     padding:
                                         const EdgeInsets.fromLTRB(10, 0, 0, 10),
                                     child: Column(

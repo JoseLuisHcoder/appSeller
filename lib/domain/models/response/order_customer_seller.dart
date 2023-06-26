@@ -162,7 +162,7 @@ class OrderOrder {
   bool visited;
   bool completed;
   bool onRoute;
-  int finalPrice;
+  double finalPrice;
   List<Item> orderCustomerItems;
 
   OrderOrder({
@@ -193,7 +193,7 @@ class OrderOrder {
       visited: json['visited'],
       completed: json['completed'],
       onRoute: json['on_route'],
-      finalPrice: json['final_price'],
+      finalPrice: json['final_price'].toDouble(),
       orderCustomerItems: List<Item>.from(
           json['orderCustomerItems'].map((x) => Item.fromJson(x))),
     );
@@ -213,7 +213,6 @@ class Customer {
   int isCredit;
   int paymentDeadline;
   int? totalCreditLine;
-  int ubiGeoId;
   CustomerType customerType;
   CustomerCurrencyType customerCurrencyType;
   CustomerAgency customerAgency;
@@ -233,7 +232,6 @@ class Customer {
     required this.isCredit,
     required this.paymentDeadline,
     this.totalCreditLine,
-    required this.ubiGeoId,
     required this.customerType,
     required this.customerCurrencyType,
     required this.customerAgency,
@@ -255,7 +253,6 @@ class Customer {
       isCredit: json['is_credit'],
       paymentDeadline: json['payment_deadline'],
       totalCreditLine: json['total_credit_line'],
-      ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
       customerCurrencyType:
           CustomerCurrencyType.fromJson(json['customer_currency_type']),

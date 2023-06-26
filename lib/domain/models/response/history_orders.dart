@@ -122,7 +122,6 @@ class Customer {
   int isCredit;
   int paymentDeadline;
   int totalCreditLine;
-  int ubiGeoId;
   CustomerType customerType;
   CustomerAgency customerAgency;
   CustomerPriceList customerPriceList;
@@ -139,7 +138,6 @@ class Customer {
     required this.isCredit,
     required this.paymentDeadline,
     required this.totalCreditLine,
-    required this.ubiGeoId,
     required this.customerType,
     required this.customerAgency,
     required this.customerPriceList,
@@ -158,7 +156,6 @@ class Customer {
       isCredit: json['is_credit'],
       paymentDeadline: json['payment_deadline'],
       totalCreditLine: json['total_credit_line'] ?? 0,
-      ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
       customerAgency: CustomerAgency.fromJson(json['customer_agency']),
       customerPriceList:

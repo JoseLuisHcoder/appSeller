@@ -24,7 +24,7 @@ class _VisitsPageState extends State<VisitsPage> {
         appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
-            title: Row(
+            title: const Row(
               children: [
                 Flexible(child: SearchStatic(textSearch: textSearch)),
                 TimerVisit()
@@ -37,7 +37,7 @@ class _VisitsPageState extends State<VisitsPage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<CustomerSeller?> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
+                    return const CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtienen los datos
                   } else if (snapshot.hasError) {
                     return Text(
                         'Error: ${snapshot.error}'); // Muestra un mensaje de error si ocurre un error
@@ -86,9 +86,9 @@ class _VisitsPageState extends State<VisitsPage> {
                         ),
                       ]);
                     }
-                    return Text("No se pudo cargar la data");
+                    return const Text("No se pudo cargar la data");
                   }
-                  return Text("No se pudo cargar la data");
+                  return const Text("No se pudo cargar la data");
                 })));
   }
 
@@ -100,7 +100,7 @@ class _VisitsPageState extends State<VisitsPage> {
         children: [
           RichText(
               text: TextSpan(children: [
-            TextSpan(
+            const TextSpan(
                 text: 'Clientes a visitar: ',
                 style: TextStyle(
                     fontSize: 12,
@@ -109,8 +109,8 @@ class _VisitsPageState extends State<VisitsPage> {
                     color: kAppBar)),
             TextSpan(
                 text:
-                    "${(customers.quantityInRout + customers.quantityNotInRout)}",
-                style: TextStyle(
+                    "${(customers.onRouteQuantityVisited + customers.onRoutePendingVisit)}",
+                style: const TextStyle(
                     fontSize: 14,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
@@ -128,8 +128,12 @@ class _VisitsPageState extends State<VisitsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: LinearProgressIndicator(
           color: const Color(0xff00BBF9),
-          value: customers.quantityInRout /
-              (customers.quantityInRout + customers.quantityNotInRout),
+          value: (customers.onRouteQuantityVisited == 0 &&
+                  customers.onRoutePendingVisit == 0)
+              ? 0
+              : customers.onRouteQuantityVisited /
+                  (customers.onRouteQuantityVisited +
+                      customers.onRoutePendingVisit),
           backgroundColor: Colors.grey.shade200,
         ));
   }
@@ -143,30 +147,30 @@ class _VisitsPageState extends State<VisitsPage> {
           const SizedBox(
             height: 10,
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Visitados',
+                  const Text('Visitados',
                       style: TextStyle(
                           fontSize: 12,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w300,
                           color: Color(0xff525252))),
-                  Text('('),
-                  Icon(Icons.timer_outlined, size: 12, color: kAppBar),
-                  Text('2h 3m',
-                      style: TextStyle(
+                  const Text('('),
+                  const Icon(Icons.timer_outlined, size: 12, color: kAppBar),
+                  Text(customers.timeCompleted,
+                      style: const TextStyle(
                           fontSize: 12,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w300,
                           color: kAppBar)),
-                  Text(')')
+                  const Text(')')
                 ],
               ),
-              Text('Por visitar',
+              const Text('Por visitar',
                   style: TextStyle(
                       fontSize: 12,
                       fontFamily: 'Roboto',
@@ -181,7 +185,7 @@ class _VisitsPageState extends State<VisitsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(children: [
-                Text(customers.quantityInRout.toString(),
+                Text(customers.onRouteQuantityVisited.toString(),
                     style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'Roboto',
@@ -194,15 +198,15 @@ class _VisitsPageState extends State<VisitsPage> {
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w500,
                         color: kAppBar)),
-                const Text('2h 3m',
-                    style: TextStyle(
+                Text(customers.timeCompleted,
+                    style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w500,
                         color: kAppBar)),
                 const Text(')')
               ]),
-              Text(customers.quantityNotInRout.toString(),
+              Text(customers.onRoutePendingVisit.toString(),
                   style: const TextStyle(
                       fontSize: 14,
                       fontFamily: 'Roboto',
@@ -220,7 +224,7 @@ class _VisitsPageState extends State<VisitsPage> {
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 15),
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: responsesCompleted.length,
         itemBuilder: (context, index) {
@@ -241,7 +245,7 @@ class _VisitsPageState extends State<VisitsPage> {
                   ),
                   const Divider(),
                   ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: response["value"].length,
                     itemBuilder: (context, index2) {
@@ -274,13 +278,13 @@ class _VisitsPageState extends State<VisitsPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Divider(),
+                                          const Divider(),
                                           Container(
                                             width: 200,
                                             child: Text(
                                               result["customer"]
                                                   ["legal_representator"],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                                 color: kAppBar,
@@ -292,7 +296,7 @@ class _VisitsPageState extends State<VisitsPage> {
                                             width: 317,
                                             child: Text(
                                               result["customer"]["address"],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                                 color: kAppBar,
@@ -309,14 +313,14 @@ class _VisitsPageState extends State<VisitsPage> {
                                                       result["visit"]["visit"]
                                                               [0]
                                                           ["date_programmed"],
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: kGrey500,
                                                       ),
                                                     )
-                                                  : Text(""),
+                                                  : const Text(""),
                                               const SizedBox(
                                                 width: 50,
                                               ),
@@ -346,7 +350,7 @@ class _VisitsPageState extends State<VisitsPage> {
                   const Divider(),
                 ],
               ),
-              Divider(),
+              const Divider(),
               // Agrega más elementos de la lista aquí según tus necesidades
             ],
           );

@@ -1,28 +1,33 @@
 import 'package:vendedor/domain/models/response/history_orders.dart';
 
 class CustomerSeller {
-  final int quantityInRout;
-  final int quantityNotInRout;
+  final String timeCompleted;
+  final int onRouteQuantityVisited;
+  final int onRoutePendingVisit;
+  final int notRouteQuantityVisited;
+  final int notRoutePendingVisit;
   final dynamic onRoute;
   final dynamic notInRoute;
 
   CustomerSeller({
-    required this.quantityInRout,
-    required this.quantityNotInRout,
+    required this.timeCompleted,
+    required this.onRouteQuantityVisited,
+    required this.onRoutePendingVisit,
+    required this.notRouteQuantityVisited,
+    required this.notRoutePendingVisit,
     required this.onRoute,
     required this.notInRoute,
   });
 
   factory CustomerSeller.fromJson(Map<String, dynamic> json) {
     return CustomerSeller(
-      quantityInRout: json['quantity_in_rout'],
-      quantityNotInRout: json['quantity_not_in_rout'],
+      onRouteQuantityVisited: json['on_route_quantity_visited'],
+      onRoutePendingVisit: json['on_route_pending_visit'],
+      notRouteQuantityVisited: json['not_route_quantity_visited'],
+      notRoutePendingVisit: json['not_route_pending_visit'],
+      timeCompleted: json['time_completed'],
       onRoute: json['on_route'],
       notInRoute: json['not_in_route'],
-      /*onRoute: List<CustomerData>.from(
-          json['on_route'].map((data) => CustomerData.fromJson(data))),
-      notInRoute: List<CustomerData>.from(
-        json['not_in_route'].map((data) => CustomerData.fromJson(data)),*/
     );
   }
 }

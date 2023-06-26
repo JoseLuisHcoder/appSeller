@@ -56,7 +56,6 @@ class CustomerItem {
   int isCredit;
   int paymentDeadLine;
   dynamic totalCreditLine;
-  int ubiGeoId;
   CustomerType customerType;
   Map<String, dynamic> customerCurrencyType;
   Map<String, dynamic> customerUbigeo;
@@ -76,7 +75,6 @@ class CustomerItem {
     required this.isCredit,
     required this.paymentDeadLine,
     required this.totalCreditLine,
-    required this.ubiGeoId,
     required this.customerType,
     required this.customerCurrencyType,
     required this.customerUbigeo,
@@ -99,7 +97,6 @@ class CustomerItem {
       paymentDeadLine: json['payment_deadline'],
       totalCreditLine: json['total_credit_line'],
       isCredit: json['is_credit'],
-      ubiGeoId: json['ubi_geo_id'],
       customerType: CustomerType.fromJson(json['customer_type']),
       customerCurrencyType: json['customer_currency_type'],
       customerUbigeo: json['customer_ubigeo'],

@@ -122,12 +122,12 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
-    /*timer_ == true
+    timer_ == true
         ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content:
                 Text("Aun tiene una visita pendiente, no puede iniciar otra."),
             backgroundColor: kError))
-        : startVisit(context);*/
+        : startVisit(context);
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kGrey800),
