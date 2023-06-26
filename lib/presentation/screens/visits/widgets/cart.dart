@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendedor/data/secure_storage.dart';
@@ -38,7 +40,7 @@ class _CartState extends State<Cart> {
     super.initState();
     fetchData();
     fetchPro();
-    _loadSavedTime();
+    startVisit();
   }
 
   Future<void> fetchData() async {
@@ -106,28 +108,36 @@ class _CartState extends State<Cart> {
     return '$minutesStr:$secondsStr';
   }
 
-  Future<void> startVisit(context) async {
+  Future<void> startVisit() async {
     final message = await visitServices.startVisit(widget.customer);
+    if (message["code"] == 200) {
+      print(message["code"]);
+      /*ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kGreen));*/
+      _loadSavedTime();
+    } else {
+      /*ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kError));*/
+      print(message["code"]);
+      //Navigator.pop(context);
+    }
+  }
+
+  Future<void> finishVisit(context) async {
+    final message = await visitServices.finishVisit(widget.customer);
     if (message["code"] == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message["message"]), backgroundColor: kGreen));
+      _timer?.cancel();
+      remove();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message["message"]), backgroundColor: kError));
-      _timer?.cancel();
-      remove();
-      Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    timer_ == true
-        ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text("Aun tiene una visita pendiente, no puede iniciar otra."),
-            backgroundColor: kError))
-        : startVisit(context);
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kGrey800),
@@ -232,6 +242,7 @@ class _CartState extends State<Cart> {
       height: 63,
       child: ElevatedButton(
         onPressed: () {
+          finishVisit(context);
           remove();
           Navigator.pop(context);
         },

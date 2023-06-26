@@ -36,7 +36,7 @@ class VisitServices {
     return response["status"];
   }
 
-  Future<Map<String, dynamic>?> finishVisit(int customerId) async {
+  Future<Map<String, dynamic>> finishVisit(int customerId) async {
     final idSeller = await secureStorage.readToken();
     Map<String, String> headers = {'Content-Type': 'application/json'};
     Map<String, dynamic> body = {
