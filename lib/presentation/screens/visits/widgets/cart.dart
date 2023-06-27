@@ -11,6 +11,7 @@ import 'package:vendedor/domain/services/visit_services.dart';
 import 'package:vendedor/presentation/screens/home/home_page.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product_promotions.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
 
 import '../../../../data/themes.dart';
 // import '../../../../widgets/card_product.dart';
@@ -61,6 +62,7 @@ class _CartState extends State<Cart> {
   void remove() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("savedTimeFirst");
+    prefs.remove("customerIdVisit");
   }
 
   Future<void> fetchPro() async {
@@ -86,6 +88,7 @@ class _CartState extends State<Cart> {
     } else {
       await prefs.setInt(
           'savedTimeFirst', DateTime.now().millisecondsSinceEpoch);
+      await prefs.setInt('customerIdVisit', widget.customer);
     }
     _startTimer();
   }
@@ -114,13 +117,13 @@ class _CartState extends State<Cart> {
       print(message["code"]);
       /*ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message["message"]), backgroundColor: kGreen));*/
-      _loadSavedTime();
     } else {
       /*ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message["message"]), backgroundColor: kError));*/
       print(message["code"]);
       //Navigator.pop(context);
     }
+    _loadSavedTime();
   }
 
   Future<void> finishVisit(context) async {
@@ -141,25 +144,7 @@ class _CartState extends State<Cart> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: kGrey800),
-        actions: [
-          Container(
-            padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-            width: 120,
-            height: 32,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-              width: 120,
-              height: 32,
-              decoration: BoxDecoration(
-                  color: kPrimary, borderRadius: BorderRadius.circular(5)),
-              child: Text(
-                _formatTime(_seconds),
-                textAlign: TextAlign.center,
-                style: TextStyle(color: kWhite, fontSize: 24),
-              ),
-            ),
-          )
-        ],
+        actions: [TimerVisit()],
         backgroundColor: kWhite,
         elevation: 0,
       ),
@@ -243,7 +228,6 @@ class _CartState extends State<Cart> {
       child: ElevatedButton(
         onPressed: () {
           finishVisit(context);
-          remove();
           Navigator.pop(context);
         },
         style: ElevatedButton.styleFrom(

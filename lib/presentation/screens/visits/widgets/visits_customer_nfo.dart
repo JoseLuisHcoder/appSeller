@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendedor/domain/models/response/visit_item.dart';
 import 'package:vendedor/domain/services/visit_services.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/payments.dart';
@@ -53,16 +54,21 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
 
   late CustomerVisit visitCust;
   int val = 0;
+  int? customerID;
 
   void getInfo() async {
     final visit = await visitServices.getVisitCustomerInfo(widget.customer);
     int value = 0;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final customerIDV = prefs.getInt('customerIdVisit');
     if (visit == null) {
       value = 2;
     } else {
       value = 1;
     }
     setState(() {
+      customerID = customerIDV;
       visitCust = visit!;
       val = value;
     });
@@ -135,17 +141,27 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       height: 48,
       child: ElevatedButton(
         onPressed: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (contex) => Cart(
-                        customer: widget.customer,
-                      )));
+          if (customerID == null || customerID == widget.customer) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (contex) => Cart(
+                          customer: widget.customer,
+                        ))).then((_) => setState(() {}));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("Ya inició una visita con un cliente distinito"),
+                backgroundColor: kError));
+          }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: kGreen,
+          backgroundColor:
+              (customerID == widget.customer) ? kSecondary : kGreen,
         ),
-        child: const Text('INICIAR VISITA',
+        child: Text(
+            (customerID == widget.customer)
+                ? 'CONTINUAR VISITA'
+                : 'INICIAR VISITA',
             style: TextStyle(
                 fontSize: 16, fontWeight: FontWeight.w400, color: kWhite)),
       ),
@@ -203,10 +219,10 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
                 ],
               ),
               onTap: () {
-                Navigator.push(
+                /*Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const PaymentsPage()));
+                        builder: (context) => const PaymentsPage()));*/
               },
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),

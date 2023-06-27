@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vendedor/domain/models/response/customer_seller.dart';
 import 'package:vendedor/domain/models/response/history_orders.dart';
 import 'package:vendedor/domain/services/customers_services.dart';
@@ -18,6 +19,21 @@ class VisitsPage extends StatefulWidget {
 const String textSearch = "Ingresa los datos";
 
 class _VisitsPageState extends State<VisitsPage> {
+  int? customerIdVisit;
+  void initData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final customerIDV = prefs.getInt('customerIdVisit');
+    setState(() {
+      customerIdVisit = customerIDV;
+    });
+  }
+
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -325,14 +341,22 @@ class _VisitsPageState extends State<VisitsPage> {
                                                 width: 50,
                                               ),
                                               Text(
-                                                result["visit"]["visited"] ==
-                                                        true
-                                                    ? "Visitado"
-                                                    : "",
-                                                style: const TextStyle(
+                                                customerIdVisit ==
+                                                        result["customer"]["id"]
+                                                    ? "Visitando"
+                                                    : result["visit"]
+                                                                ["visited"] ==
+                                                            true
+                                                        ? "Visitado"
+                                                        : "",
+                                                style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
-                                                  color: kGreen,
+                                                  color: customerIdVisit ==
+                                                          result["customer"]
+                                                              ["id"]
+                                                      ? kSecondary
+                                                      : kGreen,
                                                 ),
                                               ),
                                             ],
