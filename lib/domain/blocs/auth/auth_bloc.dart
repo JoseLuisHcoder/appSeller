@@ -23,8 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (data != null) {
         await secureStorage.deleteToken();
+        await secureStorage.userToken(data["token"] ?? "");
 
-        await secureStorage.persistenToken(data.toString());
+        await secureStorage.persistenToken(data["seller_id"].toString());
         emit(SuccessAuthState());
       } else {
         emit(FailureAuthState(error: "no se pudo iniciar sesión"));

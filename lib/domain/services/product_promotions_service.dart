@@ -10,9 +10,14 @@ import 'package:http/http.dart' as http;
 class ProductPromotionsServices {
   Future<List<ProductPromotions>?> getProductsPromotions() async {
     final idCustomer = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/Promotion/product/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     // log(resp.body);
     final response = jsonDecode(resp.body);
     if (response['status']['code'] == 200) {

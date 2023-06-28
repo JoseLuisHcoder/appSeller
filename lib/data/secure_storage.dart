@@ -3,6 +3,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class SecureStorageFrave {
   final secureStorage = FlutterSecureStorage();
 
+  Future<void> userToken(String token) async {
+    await secureStorage.write(key: 'bearer', value: token);
+  }
+
+  Future<String?> readUserToken() async {
+    return await secureStorage.read(key: 'bearer');
+  }
+
   Future<void> persistenToken(String token) async {
     await secureStorage.write(key: 'token', value: token);
   }

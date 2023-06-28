@@ -9,9 +9,14 @@ import 'package:vendedor/domain/models/response/visit_item.dart';
 class CustomerServices {
   Future<CustomerSeller?> getCustomerSeller() async {
     final idSeller = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/Seller/get_plan_visits/$idSeller'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
 
     if (resp.statusCode == 200) {
       final responseCustomerSeller =

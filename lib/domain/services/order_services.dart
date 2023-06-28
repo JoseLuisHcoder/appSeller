@@ -8,9 +8,14 @@ import 'package:http/http.dart' as http;
 
 class OrderServices {
   Future<List<HistoryOrder>?> getOrdersByCustomer(int idCustomer) async {
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/OrderCustomer/customer/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);
@@ -28,10 +33,15 @@ class OrderServices {
 
   Future<HistoryOrder?> getLatestOrderByCustomer() async {
     String? idCustomer = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     if (idCustomer == null) return null;
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/OrderCustomer/customer/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);
@@ -65,7 +75,11 @@ class OrderServices {
       {required int idOrderCustomer,
       required int rate,
       required String comment}) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {"rate": rate, "comment": comment};
 
     http.Response resp = await http.post(
@@ -100,7 +114,11 @@ class OrderServices {
     required int complaintReasonId,
     required String description,
   }) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {
       "complaint_reason_id": complaintReasonId,
       "description": description
@@ -139,7 +157,11 @@ class OrderServices {
     required String photo,
     required String dateReturn,
   }) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {
       "devolution_reason_id": devolutionReasonId,
       "description": description,

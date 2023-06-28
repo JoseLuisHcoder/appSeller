@@ -142,12 +142,12 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       child: ElevatedButton(
         onPressed: () async {
           if (customerID == null || customerID == widget.customer) {
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (contex) => Cart(
                           customer: widget.customer,
-                        ))).then((_) => setState(() {}));
+                        )));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text("Ya inició una visita con un cliente distinito"),

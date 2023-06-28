@@ -129,13 +129,13 @@ class _CartState extends State<Cart> {
   Future<void> finishVisit(context) async {
     final message = await visitServices.finishVisit(widget.customer);
     if (message["code"] == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message["message"]), backgroundColor: kGreen));
+      /*ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kGreen));*/
       _timer?.cancel();
       remove();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message["message"]), backgroundColor: kError));
+      /*ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message["message"]), backgroundColor: kError));*/
     }
   }
 

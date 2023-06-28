@@ -9,7 +9,11 @@ import 'package:http/http.dart' as http;
 class ProductFavoriteServices {
   Future<ResponseFavorite?> postFavorite({required int idProduct}) async {
     final customerId = await secureStorage.readToken();
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {"customer_id": customerId};
 
     http.Response resp = await http.post(

@@ -51,6 +51,8 @@ dependencies:
   syncfusion_flutter_charts: ^21.2.8
   timer_builder: ^2.0.0
   shared_preferences: ^2.0.6
+  geolocator: ^9.0.2
+
 
 dev_dependencies:
   flutter_test:

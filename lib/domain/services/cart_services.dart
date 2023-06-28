@@ -14,7 +14,11 @@ class CartServices {
       {required String idCustomer,
       required int idProduct,
       required int quantity}) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {"product_id": idProduct, "quantity": quantity};
 
     http.Response resp = await http.post(
@@ -35,7 +39,11 @@ class CartServices {
       {required String idCustomer,
       required int idProduct,
       required int quantity}) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {"product_id": idProduct, "quantity": quantity};
 
     http.Response resp = await http.post(
@@ -51,9 +59,15 @@ class CartServices {
   }
 
   Future<ShoppingCart?> getCartByCustomer(int idCustomer) async {
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/ShoppingCart/customer/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);
@@ -69,7 +83,11 @@ class CartServices {
 
   Future<ResponseOrder?> closeCart(
       int idCustomer, int? seller, String? address) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {
       "seller_id": seller ?? 2,
       "address": address ?? 'calle miraflores'
@@ -93,9 +111,14 @@ class CartServices {
 
   Future<CartSeller?> getCartBySeller() async {
     final idSeller = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/ShoppingCart/seller/$idSeller'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);
@@ -109,9 +132,14 @@ class CartServices {
 
   Future<OrderCustomerSeller?> getOrderCustomerBySeller() async {
     final idSeller = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/OrderCustomer/seller/$idSeller'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     if (resp.statusCode == 200) {
       final body = jsonDecode(resp.body);

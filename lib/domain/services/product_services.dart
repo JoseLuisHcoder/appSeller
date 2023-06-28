@@ -11,9 +11,14 @@ import 'package:http/http.dart' as http;
 class ProductServices {
   Future<List<Product>?> listProductsHomeCarousel() async {
     final idCustomer = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/Product/customer/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     // log(resp.body);
     final responseProductsHome =
         ResponseProductsHome.fromJson(jsonDecode(resp.body));
@@ -43,10 +48,15 @@ class ProductServices {
 
   Future<List<Product>?> listProductsBestSellings() async {
     final idCustomer = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse(
             '${Environment.baseUrl}/Product/products_best_seller/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     // log(resp.body);
     final responseProductsHome =
         ResponseProductsHome.fromJson(jsonDecode(resp.body));
@@ -86,9 +96,14 @@ class ProductServices {
 
   Future<List<Product>?> listProductsMostSeen() async {
     final idCustomer = await secureStorage.readToken();
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     final resp = await http.get(
         Uri.parse('${Environment.baseUrl}/Product/most_seen/$idCustomer'),
-        headers: {'Accept': 'application/json'});
+        headers: headers);
     log(resp.body);
     final responseProductsHome =
         ResponseProductsHome.fromJson(jsonDecode(resp.body));

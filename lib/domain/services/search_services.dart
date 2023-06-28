@@ -8,7 +8,11 @@ import 'package:http/http.dart' as http;
 class SearchServices {
   Future<List<Product>> searchProductsByWord(String searchWord) async {
     final idCustomer = await secureStorage.readToken();
-    Map<String, String> headers = {'Content-Type': 'application/json'};
+    final token = await secureStorage.readUserToken();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
     Map<String, dynamic> body = {"search_word": searchWord};
 
     http.Response resp = await http.post(
