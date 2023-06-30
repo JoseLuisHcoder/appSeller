@@ -54,6 +54,12 @@ class _TimerVisitState extends State<TimerVisit> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(TimerVisit oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadSavedTime();
+  }
+
   String _formatTime(int seconds) {
     int minutes = seconds ~/ 60;
     int remainingSeconds = seconds % 60;

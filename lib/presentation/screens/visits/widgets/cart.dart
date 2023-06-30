@@ -12,6 +12,7 @@ import 'package:vendedor/presentation/screens/home/home_page.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/card_product_promotions.dart';
 import 'package:vendedor/presentation/screens/visits/widgets/timer.dart';
+import 'package:vendedor/presentation/screens/visits/widgets/visits_customer_nfo.dart';
 
 import '../../../../data/themes.dart';
 // import '../../../../widgets/card_product.dart';
@@ -228,7 +229,7 @@ class _CartState extends State<Cart> {
       child: ElevatedButton(
         onPressed: () {
           finishVisit(context);
-          Navigator.pop(context);
+          Navigator.of(context).pop();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: kPrimary,

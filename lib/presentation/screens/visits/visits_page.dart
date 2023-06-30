@@ -16,7 +16,7 @@ class VisitsPage extends StatefulWidget {
   State<VisitsPage> createState() => _VisitsPageState();
 }
 
-const String textSearch = "Ingresa los datos";
+const String textBarSearch = "Ingresa los datos";
 
 class _VisitsPageState extends State<VisitsPage> {
   int? customerIdVisit;
@@ -27,6 +27,8 @@ class _VisitsPageState extends State<VisitsPage> {
       customerIdVisit = customerIDV;
     });
   }
+
+  String textSearch = "";
 
   @override
   void initState() {
@@ -40,10 +42,18 @@ class _VisitsPageState extends State<VisitsPage> {
         appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
-            title: const Row(
+            title: Row(
               children: [
-                Flexible(child: SearchStatic(textSearch: textSearch)),
-                TimerVisit()
+                Flexible(
+                    child: SearchStatic(
+                  text: textBarSearch,
+                  onChanged: (search) {
+                    setState(() {
+                      textSearch = search;
+                    });
+                  },
+                )),
+                customerIdVisit != null ? TimerVisit() : Container()
               ],
             )),
         body: SingleChildScrollView(
@@ -266,109 +276,122 @@ class _VisitsPageState extends State<VisitsPage> {
                     itemCount: response["value"].length,
                     itemBuilder: (context, index2) {
                       final result = response["value"][index2];
-                      return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => VisitsCustomerInfo(
-                                  customer: result["customer"]["id"],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.account_circle_outlined,
-                                  color: Colors.grey.shade600,
-                                ),
-                                Row(
+                      return result["customer"]["legal_representator"]
+                              .contains(textSearch)
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VisitsCustomerInfo(
+                                      customer: result["customer"]["id"],
+                                      visited: result["visit"]["visited"],
+                                    ),
+                                  ),
+                                ).then((value) {
+                                  setState(() {
+                                    initState();
+                                  });
+                                });
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                child: Row(
                                   children: [
-                                    Container(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 0, 0, 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Divider(),
-                                          Container(
-                                            width: 200,
-                                            child: Text(
-                                              result["customer"]
-                                                  ["legal_representator"],
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: kAppBar,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 317,
-                                            child: Text(
-                                              result["customer"]["address"],
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: kAppBar,
-                                              ),
-                                            ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                    Icon(
+                                      Icons.account_circle_outlined,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 0, 0, 10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              result["visit"]["visit"]
-                                                      .isNotEmpty
-                                                  ? Text(
-                                                      result["visit"]["visit"]
-                                                              [0]
-                                                          ["date_programmed"],
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: kGrey500,
-                                                      ),
-                                                    )
-                                                  : const Text(""),
-                                              const SizedBox(
-                                                width: 50,
-                                              ),
-                                              Text(
-                                                customerIdVisit ==
-                                                        result["customer"]["id"]
-                                                    ? "Visitando"
-                                                    : result["visit"]
-                                                                ["visited"] ==
-                                                            true
-                                                        ? "Visitado"
-                                                        : "",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: customerIdVisit ==
-                                                          result["customer"]
-                                                              ["id"]
-                                                      ? kSecondary
-                                                      : kGreen,
+                                              const Divider(),
+                                              Container(
+                                                width: 200,
+                                                child: Text(
+                                                  result["customer"]
+                                                      ["legal_representator"],
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: kAppBar,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
+                                              ),
+                                              Container(
+                                                width: 317,
+                                                child: Text(
+                                                  result["customer"]["address"],
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: kAppBar,
+                                                  ),
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  result["visit"]["visit"]
+                                                          .isNotEmpty
+                                                      ? Text(
+                                                          result["visit"]
+                                                                  ["visit"][0][
+                                                              "date_programmed"],
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: kGrey500,
+                                                          ),
+                                                        )
+                                                      : const Text(""),
+                                                  const SizedBox(
+                                                    width: 50,
+                                                  ),
+                                                  Text(
+                                                    customerIdVisit ==
+                                                            result["customer"]
+                                                                ["id"]
+                                                        ? "Visitando"
+                                                        : result["visit"][
+                                                                    "visited"] ==
+                                                                true
+                                                            ? "Visitado"
+                                                            : "",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: customerIdVisit ==
+                                                              result["customer"]
+                                                                  ["id"]
+                                                          ? kSecondary
+                                                          : kGreen,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ));
+                              ))
+                          : Container();
                     },
                   ),
                   const Divider(),

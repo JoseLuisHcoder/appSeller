@@ -14,7 +14,9 @@ import 'cart.dart';
 
 class VisitsCustomerInfo extends StatefulWidget {
   int customer;
-  VisitsCustomerInfo({Key? key, required this.customer}) : super(key: key);
+  bool visited;
+  VisitsCustomerInfo({Key? key, required this.customer, required this.visited})
+      : super(key: key);
 
   @override
   State<VisitsCustomerInfo> createState() => _VisitsCustomerInfoState();
@@ -102,7 +104,7 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
           'Plan de visitas',
           style: TextStyle(color: kAppBar, fontSize: 16),
         ),
-        actions: [const TimerVisit()],
+        actions: [customerID != null ? const TimerVisit() : Container()],
         backgroundColor: kWhite,
         elevation: 0,
       ),
@@ -140,20 +142,27 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
       width: MediaQuery.of(context).size.width,
       height: 48,
       child: ElevatedButton(
-        onPressed: () async {
-          if (customerID == null || customerID == widget.customer) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (contex) => Cart(
-                          customer: widget.customer,
-                        )));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("Ya inició una visita con un cliente distinito"),
-                backgroundColor: kError));
-          }
-        },
+        onPressed: widget.visited
+            ? null
+            : () async {
+                if (customerID == null || customerID == widget.customer) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (contex) => Cart(
+                                customer: widget.customer,
+                              ))).then((value) {
+                    setState(() {
+                      initState();
+                    });
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content:
+                          Text("Ya inició una visita con un cliente distinito"),
+                      backgroundColor: kError));
+                }
+              },
         style: ElevatedButton.styleFrom(
           backgroundColor:
               (customerID == widget.customer) ? kSecondary : kGreen,
@@ -161,7 +170,9 @@ class _VisitsCustomerInfoState extends State<VisitsCustomerInfo> {
         child: Text(
             (customerID == widget.customer)
                 ? 'CONTINUAR VISITA'
-                : 'INICIAR VISITA',
+                : widget.visited
+                    ? 'TERMINADO'
+                    : 'INICIAR VISITA',
             style: TextStyle(
                 fontSize: 16, fontWeight: FontWeight.w400, color: kWhite)),
       ),

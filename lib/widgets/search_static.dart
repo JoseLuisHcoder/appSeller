@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../data/themes.dart';
 
 class SearchStatic extends StatefulWidget {
-  final String textSearch;
-  const SearchStatic({super.key, required this.textSearch});
+  final String text;
+  final Function(String)? onChanged;
+  const SearchStatic({super.key, required this.onChanged, required this.text});
 
   @override
   State<SearchStatic> createState() => _SearchStaticState();
@@ -31,8 +32,9 @@ class _SearchStaticState extends State<SearchStatic> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: TextField(
+                  onChanged: widget.onChanged,
                   decoration: InputDecoration(
-                      hintText: widget.textSearch,
+                      hintText: widget.text,
                       border: InputBorder.none,
                       isCollapsed: true,
                       contentPadding: EdgeInsets.zero,
