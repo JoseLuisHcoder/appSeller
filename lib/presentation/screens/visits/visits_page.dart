@@ -263,7 +263,7 @@ class _VisitsPageState extends State<VisitsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        response["key"],
+                        response["key"].toString(),
                         textAlign: TextAlign.start,
                         style: const TextStyle(fontSize: 20, color: kTextColor),
                       ),
@@ -342,11 +342,11 @@ class _VisitsPageState extends State<VisitsPage> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  result["visit"]["visit"]
-                                                          .isNotEmpty
+                                                  result["visit"]["visit"] !=
+                                                          null
                                                       ? Text(
                                                           result["visit"]
-                                                                  ["visit"][0][
+                                                                  ["visit"][
                                                               "date_programmed"],
                                                           style:
                                                               const TextStyle(
